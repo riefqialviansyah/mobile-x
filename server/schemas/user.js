@@ -9,8 +9,17 @@ const typeDefs = `#graphql
     password: String
   }
 
+  type ResponseLogin {
+    access_token: String
+  }
+
+  input userInputLogin {
+    email: String,
+    password: String
+  }
+
   type Query {
-    getUser: [User]
+    login(userLogin: userInputLogin): ResponseLogin
   }
 
   input userInputRegister {
@@ -21,17 +30,27 @@ const typeDefs = `#graphql
   }
 
   type Mutation {
-    register(userRegister:userInputRegister): User
+    register(userRegister: userInputRegister): User
   }
 `;
 
 const resolvers = {
+  Query: {
+    login: async (parent, args) => {
+      try {
+        const { userLogin } = args;
+        const access_token = await User.login(userLogin);
+        return access_token;
+      } catch (error) {
+        throw error;
+      }
+    },
+  },
   Mutation: {
     register: async (parent, args) => {
       try {
         const { userRegister } = args;
         const user = await User.register(userRegister);
-        console.log(user);
         return user;
       } catch (error) {
         throw error;
