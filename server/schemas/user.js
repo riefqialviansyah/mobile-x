@@ -20,6 +20,7 @@ const typeDefs = `#graphql
 
   type Query {
     login(userLogin: userInputLogin): ResponseLogin
+    getUser(username: String): User
   }
 
   input userInputRegister {
@@ -41,6 +42,15 @@ const resolvers = {
         const { userLogin } = args;
         const access_token = await User.login(userLogin);
         return access_token;
+      } catch (error) {
+        throw error;
+      }
+    },
+    getUser: async (parent, args) => {
+      try {
+        const { username } = args;
+        const user = await User.getUserByUsername(username);
+        return user;
       } catch (error) {
         throw error;
       }

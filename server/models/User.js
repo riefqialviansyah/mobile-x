@@ -18,13 +18,26 @@ class User {
 
   static async login(inputUser) {
     const users = database.collection("Users");
-    const user = await users.findOne({ email: inputUser.email });
-    if (!user) throw { Error: "Invalid username/password" };
-    const isValid = checkPassword(inputUser.password, user.password);
-    if (!isValid) throw { Error: "Invalid username/password" };
 
-    const access_token = signToken({ id: user._id });
-    return { access_token };
+    const user = await users.findOne({ email: inputUser.email });
+    if (!user) throw new Error("Invalid username/password");
+
+    const isValid = checkPassword(inputUser.password, user.password);
+    if (!isValid) throw new Error("Invalid username/password");
+
+    const token = signToken({ id: user._id });
+    return token;
+  }
+
+  static async getUserByUsername(username) {
+    const users = database.collection("Users");
+    const option = {
+      projection: { password: 0 },
+    };
+    const user = await users.findOne({ username }, option);
+    if (!user) throw new Error("User not found");
+
+    return user;
   }
 }
 
