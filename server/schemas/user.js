@@ -1,6 +1,7 @@
 const User = require("../models/User");
 
 const typeDefs = `#graphql
+  # Schema user
   type User {
     _id: ID
     name: String
@@ -9,6 +10,7 @@ const typeDefs = `#graphql
     password: String
   }
 
+  # Login
   type ResponseLogin {
     access_token: String
   }
@@ -18,18 +20,21 @@ const typeDefs = `#graphql
     password: String
   }
 
+  # Endpoint
   type Query {
     login(userLogin: userInputLogin): ResponseLogin
     getUser(username: String): User
   }
 
+  # Register
   input userInputRegister {
     name: String,
     username: String,
     email: String,
     password: String
   }
-
+  
+  # Endpoint
   type Mutation {
     register(userRegister: userInputRegister): User
   }
