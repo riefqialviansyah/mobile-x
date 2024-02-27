@@ -16,9 +16,34 @@ class Follow {
 
   static async getFollowers(id) {
     const follows = database.collection("Follows");
-    const follower = await follows
-      .find({ followingId: new ObjectId(id) })
-      .toArray();
+    const agg = [
+      {
+        $match: {
+          followingId: new ObjectId("65dc9933eb30cfa01e50a510"),
+        },
+      },
+      {
+        $lookup: {
+          from: "Users",
+          localField: "followerId",
+          foreignField: "_id",
+          as: "detailFollower",
+        },
+      },
+      {
+        $unwind: {
+          path: "$detailFollower",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $project: {
+          "detailFollower.password": 0,
+        },
+      },
+    ];
+
+    const follower = await follows.aggregate(agg).toArray();
     return follower;
   }
 }

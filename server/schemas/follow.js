@@ -8,6 +8,13 @@ const typeDefs = `#graphql
     followerId: ID
     createdAt: String
     updatedAt: String
+    detailFollower: User
+  }
+
+  type User {
+    _id: ID
+    name: String
+    email: String
   }
 
   # Response follow
