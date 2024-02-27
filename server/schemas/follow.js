@@ -16,7 +16,7 @@ const typeDefs = `#graphql
   }
 
   type Query {
-    follow: [Follow]
+    getDataFollowers(_id: ID): [Follow]
   }
 
   type Mutation {
@@ -25,6 +25,17 @@ const typeDefs = `#graphql
 `;
 
 const resolvers = {
+  Query: {
+    getDataFollowers: async (parent, args) => {
+      try {
+        const { _id: id } = args;
+        const followers = await Follow.getFollowers(id);
+        return followers;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+  },
   Mutation: {
     follow: async (parent, args) => {
       try {

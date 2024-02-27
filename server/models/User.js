@@ -1,3 +1,4 @@
+const { ObjectId } = require("mongodb");
 const { database } = require("../config/mongodb");
 const { hashPassword, checkPassword } = require("../helpers/hash");
 const { signToken } = require("../helpers/token");
@@ -37,6 +38,15 @@ class User {
     const user = await users.findOne({ username }, option);
     if (!user) throw new Error("User not found");
 
+    return user;
+  }
+
+  static async getUserById(id) {
+    const users = database.collection("Users");
+    const option = {
+      projection: { password: 0 },
+    };
+    const user = await users.findOne({ _id: new ObjectId(id) }, option);
     return user;
   }
 }

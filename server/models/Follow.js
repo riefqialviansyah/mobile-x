@@ -11,7 +11,15 @@ class Follow {
     };
     const follows = database.collection("Follows");
     await follows.insertOne(followData);
-    return `Success to follow wiht _id: ${followingId}`;
+    return `Success to follow user wiht _id: ${followingId}`;
+  }
+
+  static async getFollowers(id) {
+    const follows = database.collection("Follows");
+    const follower = await follows
+      .find({ followingId: new ObjectId(id) })
+      .toArray();
+    return follower;
   }
 }
 

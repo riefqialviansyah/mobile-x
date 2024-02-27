@@ -23,7 +23,8 @@ const typeDefs = `#graphql
   # Endpoint
   type Query {
     login(userLogin: userInputLogin): ResponseLogin
-    getUser(username: String): User
+    getUserDataByUsername(username: String): User
+    getUserDataById(_id: String): User
   }
 
   # Register
@@ -51,10 +52,19 @@ const resolvers = {
         throw error;
       }
     },
-    getUser: async (parent, args) => {
+    getUserDataByUsername: async (parent, args) => {
       try {
         const { username } = args;
         const user = await User.getUserByUsername(username);
+        return user;
+      } catch (error) {
+        throw error;
+      }
+    },
+    getUserDataById: async (parent, args) => {
+      try {
+        const { _id: id } = args;
+        const user = await User.getUserById(id);
         return user;
       } catch (error) {
         throw error;
