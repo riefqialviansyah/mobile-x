@@ -37,6 +37,7 @@ const typeDefs = `#graphql
 
   type Query {
     getDataPosts: [Post]
+    getDataPostById(_id: ID): Post
   }
 
   input inputUserCreatePost {
@@ -57,6 +58,16 @@ const resolvers = {
       try {
         const posts = await Post.getPosts();
         return posts;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    getDataPostById: async (parent, args) => {
+      try {
+        const { _id: id } = args;
+        const post = await Post.getPostById(id);
+        console.log(post);
+        return post;
       } catch (error) {
         console.log(error);
       }

@@ -55,6 +55,47 @@ class Post {
     console.log(allPosts);
     return allPosts;
   }
+
+  static async getPostById(id) {
+    const posts = database.collection("Posts");
+    const agg = [
+      {
+        $match: {
+          _id: new ObjectId(String(id)),
+        },
+      },
+      {
+        $lookup: {
+          from: "Users",
+          localField: "authorId",
+          foreignField: "_id",
+          as: "userDetail",
+        },
+      },
+      {
+        $unwind: {
+          path: "$userDetail",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $project: {
+          "userDetail.password": 0,
+          "userDetail._id": 0,
+          "userDetail.username": 0,
+          "userDetail.email": 0,
+        },
+      },
+      {
+        $sort: {
+          createdAt: -1,
+        },
+      },
+    ];
+
+    const post = await posts.aggregate(agg).toArray();
+    return post[0];
+  }
 }
 
 module.exports = Post;
