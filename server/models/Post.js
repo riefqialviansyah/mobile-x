@@ -2,6 +2,9 @@ const { ObjectId } = require("mongodb");
 const { database } = require("../config/mongodb");
 
 class Post {
+  static collection() {
+    return database.collection("Posts");
+  }
   static async createPost({ content, tags, imgUrl, authorId }) {
     const posts = database.collection("Posts");
     const newPost = {
@@ -110,6 +113,28 @@ class Post {
       { $addToSet: { comments: newComent } }
     );
     return "Success create coment";
+  }
+
+  static async addLike({ username, postId }) {
+    const posts = database.collection("Posts");
+
+    const post = await posts.find({ _id: new ObjectId(postId) }).toArray();
+    const { likes } = post[0];
+
+    const hasLike = likes.filter((el) => el.username == username);
+    if (hasLike) throw new Error("You just allow to like once per post");
+
+    const newLike = {
+      username,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    await posts.updateOne(
+      { _id: new ObjectId(String(postId)) },
+      { $addToSet: { likes: newLike } }
+    );
+
+    return "Success like this post";
   }
 }
 

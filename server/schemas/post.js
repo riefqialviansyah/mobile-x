@@ -54,6 +54,7 @@ const typeDefs = `#graphql
   type Mutation{
     createPost(inputUser: inputUserCreatePost): responseCreatePost
     createComent(content: String, postId: String): responseComent
+    like(postId: ID): responseComent
   }
 `;
 
@@ -91,6 +92,7 @@ const resolvers = {
     createComent: async (parent, args, contexValue) => {
       try {
         const user = await contexValue.auth();
+
         const { content, postId } = args;
         const result = await Post.addComent({
           content,
@@ -100,6 +102,19 @@ const resolvers = {
         return { message: result };
       } catch (error) {
         console.log(error);
+      }
+    },
+    like: async (parent, args, contexValue) => {
+      try {
+        const user = await contexValue.auth();
+
+        const { postId } = args;
+        const result = await Post.addLike({ username: user.username, postId });
+
+        return { message: result };
+      } catch (error) {
+        console.log(error);
+        throw Error;
       }
     },
   },
