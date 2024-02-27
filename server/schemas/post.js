@@ -11,6 +11,11 @@ const typeDefs = `#graphql
     likes: [Like]
     createdAt: String
     updatedAt: String
+    userDetail: UserDetail
+  }
+
+  type UserDetail {
+    name: String
   }
 
   type Comment {
@@ -31,7 +36,7 @@ const typeDefs = `#graphql
   }
 
   type Query {
-    post: [Post]
+    getDataPosts: [Post]
   }
 
   input inputUserCreatePost {
@@ -47,6 +52,16 @@ const typeDefs = `#graphql
 `;
 
 const resolvers = {
+  Query: {
+    getDataPosts: async () => {
+      try {
+        const posts = await Post.getPosts();
+        return posts;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+  },
   Mutation: {
     createPost: async (parent, args) => {
       try {
