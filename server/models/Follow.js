@@ -2,16 +2,46 @@ const { ObjectId } = require("mongodb");
 const { database } = require("../config/mongodb");
 
 class Follow {
+  static collection() {
+    return database.collection("Follows");
+  }
+
   static async followUser({ followingId, followerId }) {
+    const followCollection = this.collection();
+
     const followData = {
-      followingId: new ObjectId(followingId), // yang diikuti
-      followerId: new ObjectId(followerId), // yang mengikuti
+      followingId: new ObjectId(String(followingId)), // yang diikuti
+      followerId: new ObjectId(String(followerId)), // yang mengikuti
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    const follows = database.collection("Follows");
-    await follows.insertOne(followData);
-    return `Success to follow user wiht _id: ${followingId}`;
+
+    const listFollow = await followCollection
+      .find({ followingId: new ObjectId(String(followingId)) })
+      .toArray();
+
+    if (listFollow.length > 0) {
+      const hasFollow = listFollow.filter((el) => {
+        return String(el.followerId) == followerId;
+      });
+
+      if (hasFollow.length > 0) {
+        await followCollection.deleteOne({ _id: hasFollow[0]._id });
+
+        return {
+          message: "You unfollow this account",
+          _id: hasFollow[0]._id,
+          ...followData,
+        };
+      }
+    }
+
+    const result = await followCollection.insertOne(followData);
+    return {
+      message: "You follow this account",
+      _id: result.insertedId,
+      ...followData,
+    };
   }
 
   static async getFollowers(id) {
@@ -41,9 +71,15 @@ class Follow {
           "detailFollower.password": 0,
         },
       },
+      {
+        $group: {
+          _id: "$detailFollower",
+        },
+      },
     ];
 
     const follower = await follows.aggregate(agg).toArray();
+    console.log(follower);
     return follower;
   }
 }

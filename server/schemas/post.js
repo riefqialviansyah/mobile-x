@@ -1,6 +1,7 @@
 const Post = require("../models/Post");
 
 const typeDefs = `#graphql
+  # Schema
   type Post {
     _id: ID
     content: String
@@ -11,14 +12,18 @@ const typeDefs = `#graphql
     likes: [Like]
     createdAt: String
     updatedAt: String
-    userDetail: UserDetail
+    detailAuthor: Author
   }
 
-  type UserDetail {
+  type Author {
+    _id: ID
     name: String
+    username: String
+    email: String
   }
 
   type Comment {
+    postId: ID
     content: String
     username: String
     createdAt: String
@@ -31,11 +36,7 @@ const typeDefs = `#graphql
     updatedAt: String
   }
   
-  type responseCreatePost {
-    message: String
-  }
-
-  type responseComent {
+  type Message {
     message: String
   }
 
@@ -44,17 +45,16 @@ const typeDefs = `#graphql
     getDataPostById(_id: ID): Post
   }
 
-  input inputUserCreatePost {
+  input dataPost {
     content: String
     tags: [String]
     imgUrl: String
-    authorId: ID
   }
 
   type Mutation{
-    createPost(inputUser: inputUserCreatePost): responseCreatePost
-    createComent(content: String, postId: String): responseComent
-    like(postId: ID): responseComent
+    post(dataPost: dataPost): Post
+    comment(content: String, postId: String): Comment
+    like(postId: ID): Message
   }
 `;
 
@@ -65,7 +65,7 @@ const resolvers = {
         const posts = await Post.getPosts();
         return posts;
       } catch (error) {
-        console.log(error);
+        throw error;
       }
     },
     getDataPostById: async (parent, args) => {
@@ -75,21 +75,27 @@ const resolvers = {
         console.log(post);
         return post;
       } catch (error) {
-        console.log(error);
+        throw error;
       }
     },
   },
   Mutation: {
-    createPost: async (parent, args) => {
+    post: async (parent, args, contextValue) => {
       try {
-        const { inputUser } = args;
-        const result = await Post.createPost(inputUser);
-        return { message: result };
+        const user = await contextValue.auth();
+
+        const { dataPost } = args;
+        const result = await Post.createPost({
+          ...dataPost,
+          authorId: user._id,
+        });
+
+        return result;
       } catch (error) {
-        console.log(error);
+        throw error;
       }
     },
-    createComent: async (parent, args, contexValue) => {
+    comment: async (parent, args, contexValue) => {
       try {
         const user = await contexValue.auth();
 
@@ -99,9 +105,9 @@ const resolvers = {
           username: user.username,
           postId,
         });
-        return { message: result };
+        return result;
       } catch (error) {
-        console.log(error);
+        throw error;
       }
     },
     like: async (parent, args, contexValue) => {

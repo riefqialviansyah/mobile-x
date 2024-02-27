@@ -4,13 +4,20 @@ const { hashPassword, checkPassword } = require("../helpers/hash");
 const { signToken } = require("../helpers/token");
 
 class User {
+  static collection() {
+    return database.collection("Users");
+  }
+
   static async register(inputUser) {
-    const users = database.collection("Users");
+    const userCollection = this.collection();
+
     const newUser = {
       ...inputUser,
       password: hashPassword(inputUser.password),
     };
-    const result = await users.insertOne(newUser);
+
+    const result = await userCollection.insertOne(newUser);
+
     return {
       _id: result.insertedId,
       ...inputUser,
@@ -18,36 +25,81 @@ class User {
   }
 
   static async login(inputUser) {
-    const users = database.collection("Users");
+    const userCollection = this.collection();
 
-    const user = await users.findOne({ email: inputUser.email });
+    const user = await userCollection.findOne({ email: inputUser.email });
     if (!user) throw new Error("Invalid username/password");
 
     const isValid = checkPassword(inputUser.password, user.password);
     if (!isValid) throw new Error("Invalid username/password");
 
     const token = signToken({ id: user._id, username: user.username });
-    return token;
+    return { token, username: user.username };
   }
 
   static async getUserByUsername(username) {
-    const users = database.collection("Users");
+    const userCollection = this.collection();
+
     const option = {
       projection: { password: 0 },
     };
-    const user = await users.findOne({ username }, option);
+
+    const user = await userCollection.findOne({ username }, option);
     if (!user) throw new Error("User not found");
 
     return user;
   }
 
   static async getUserById(id) {
-    const users = database.collection("Users");
-    const option = {
-      projection: { password: 0 },
-    };
-    const user = await users.findOne({ _id: new ObjectId(id) }, option);
-    return user;
+    const userCollection = this.collection();
+
+    const agg = [
+      {
+        $match: {
+          _id: new ObjectId(String(id)),
+        },
+      },
+      {
+        $lookup: {
+          from: "Follows",
+          localField: "_id",
+          foreignField: "followingId",
+          as: "follower",
+        },
+      },
+      {
+        $lookup: {
+          from: "Users",
+          localField: "follower.followerId",
+          foreignField: "_id",
+          as: "followerDetail",
+        },
+      },
+      {
+        $lookup: {
+          from: "Follows",
+          localField: "_id",
+          foreignField: "followerId",
+          as: "following",
+        },
+      },
+      {
+        $lookup: {
+          from: "Users",
+          localField: "following.followingId",
+          foreignField: "_id",
+          as: "followingDetail",
+        },
+      },
+      {
+        $project: {
+          password: 0,
+        },
+      },
+    ];
+
+    const profile = await userCollection.aggregate(agg).toArray();
+    return profile[0];
   }
 }
 

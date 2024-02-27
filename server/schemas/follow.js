@@ -1,14 +1,14 @@
 const Follow = require("../models/Follow");
 
 const typeDefs = `#graphql 
-  # Schema
+  # Schema (follow, getDataFollowers)
   type Follow {
     _id: ID
     followingId: ID
     followerId: ID
     createdAt: String
     updatedAt: String
-    detailFollower: User
+    message: String
   }
 
   type User {
@@ -17,17 +17,14 @@ const typeDefs = `#graphql
     email: String
   }
 
-  # Response follow
-  type ResponseFollowUser {
-    message: String
-  }
-
+  # Endpoint
   type Query {
     getDataFollowers(_id: ID): [Follow]
   }
 
+  # Endpoint
   type Mutation {
-    follow(followingId: ID, followerId: ID): ResponseFollowUser
+    follow(followingId: ID, followerId: ID): Follow
   }
 `;
 
@@ -47,9 +44,9 @@ const resolvers = {
     follow: async (parent, args) => {
       try {
         const result = await Follow.followUser(args);
-        return { message: result };
+        return result;
       } catch (error) {
-        console.log(error);
+        throw error;
       }
     },
   },

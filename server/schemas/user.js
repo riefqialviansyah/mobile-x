@@ -1,34 +1,55 @@
 const User = require("../models/User");
 
 const typeDefs = `#graphql
-  # Schema user
+  # Schema (getUserDataByUsername, )
   type User {
     _id: ID
     name: String
     username: String
     email: String
-    password: String
+  }
+
+  # Schema (getUserDataByUsername, )
+  type Profile {
+    _id: ID
+    name: String
+    username: String
+    email: String
+    follower: [Follow]
+    followerDetail: [User]
+    following: [Follow]
+    followingDetail: [User]
+  }
+
+  type Follow {
+    _id: ID
+    followingId: ID
+    followerId: ID
+    createdAt: String
+    updatedAt: String
   }
 
   # Login
-  type ResponseLogin {
+  type Token {
+    username: String
     access_token: String
   }
 
-  input userInputLogin {
+  # Input Login
+  input loginData {
     email: String,
     password: String
   }
 
   # Endpoint
   type Query {
-    login(userLogin: userInputLogin): ResponseLogin
+    login(loginData: loginData): Token
     getUserDataByUsername(username: String): User
-    getUserDataById(_id: String): User
+    getUserDataById(_id: String): Profile
   }
 
   # Register
-  input userInputRegister {
+  input registerData {
     name: String,
     username: String,
     email: String,
@@ -37,7 +58,7 @@ const typeDefs = `#graphql
   
   # Endpoint
   type Mutation {
-    register(userRegister: userInputRegister): User
+    register(registerData: registerData): User
   }
 `;
 
@@ -45,9 +66,10 @@ const resolvers = {
   Query: {
     login: async (parent, args) => {
       try {
-        const { userLogin } = args;
-        const access_token = await User.login(userLogin);
-        return { access_token };
+        const { loginData } = args;
+
+        const result = await User.login(loginData);
+        return { username: result.username, access_token: result.token };
       } catch (error) {
         throw error;
       }
@@ -55,8 +77,9 @@ const resolvers = {
     getUserDataByUsername: async (parent, args) => {
       try {
         const { username } = args;
-        const user = await User.getUserByUsername(username);
-        return user;
+
+        const result = await User.getUserByUsername(username);
+        return result;
       } catch (error) {
         throw error;
       }
@@ -74,8 +97,9 @@ const resolvers = {
   Mutation: {
     register: async (parent, args) => {
       try {
-        const { userRegister } = args;
-        const user = await User.register(userRegister);
+        const { registerData } = args;
+
+        const user = await User.register(registerData);
         return user;
       } catch (error) {
         throw error;

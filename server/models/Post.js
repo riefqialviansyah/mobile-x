@@ -5,24 +5,30 @@ class Post {
   static collection() {
     return database.collection("Posts");
   }
+
   static async createPost({ content, tags, imgUrl, authorId }) {
-    const posts = database.collection("Posts");
+    const postsCollection = this.collection();
+
     const newPost = {
       content,
       tags,
       imgUrl,
-      authorId: new ObjectId(authorId),
+      authorId: authorId,
       createdAt: new Date(),
       updatedAt: new Date(),
       comments: [],
       likes: [],
     };
-    await posts.insertOne(newPost);
-    return "Success create post";
+
+    const result = await postsCollection.insertOne(newPost);
+    return {
+      _id: result.insertedId,
+      ...newPost,
+    };
   }
 
   static async getPosts() {
-    const posts = database.collection("Posts");
+    const postsCollection = this.collection();
 
     const agg = [
       {
@@ -30,21 +36,18 @@ class Post {
           from: "Users",
           localField: "authorId",
           foreignField: "_id",
-          as: "userDetail",
+          as: "detailAuthor",
         },
       },
       {
         $unwind: {
-          path: "$userDetail",
+          path: "$detailAuthor",
           preserveNullAndEmptyArrays: true,
         },
       },
       {
         $project: {
-          "userDetail.password": 0,
-          "userDetail._id": 0,
-          "userDetail.username": 0,
-          "userDetail.email": 0,
+          "detailAuthor.password": 0,
         },
       },
       {
@@ -54,17 +57,16 @@ class Post {
       },
     ];
 
-    const allPosts = await posts.aggregate(agg).toArray();
-    console.log(allPosts);
-    return allPosts;
+    const posts = await postsCollection.aggregate(agg).toArray();
+    return posts;
   }
 
   static async getPostById(id) {
-    const posts = database.collection("Posts");
+    const postsCollection = this.collection();
     const agg = [
       {
         $match: {
-          _id: new ObjectId(String(id)),
+          _id: new ObjectId("65ddf482fa3694265f009d73"),
         },
       },
       {
@@ -72,69 +74,79 @@ class Post {
           from: "Users",
           localField: "authorId",
           foreignField: "_id",
-          as: "userDetail",
+          as: "detailAuthor",
         },
       },
       {
         $unwind: {
-          path: "$userDetail",
+          path: "$detailAuthor",
           preserveNullAndEmptyArrays: true,
         },
       },
       {
         $project: {
-          "userDetail.password": 0,
-          "userDetail._id": 0,
-          "userDetail.username": 0,
-          "userDetail.email": 0,
-        },
-      },
-      {
-        $sort: {
-          createdAt: -1,
+          "detailAuthor.password": 0,
         },
       },
     ];
 
-    const post = await posts.aggregate(agg).toArray();
+    const post = await postsCollection.aggregate(agg).toArray();
     return post[0];
   }
 
   static async addComent({ content, username, postId }) {
-    const posts = database.collection("Posts");
+    const postsCollection = this.collection();
     const newComent = {
       content,
       username,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    await posts.updateOne(
+    const result = await postsCollection.updateOne(
       { _id: new ObjectId(String(postId)) },
       { $addToSet: { comments: newComent } }
     );
-    return "Success create coment";
+    return {
+      ...newComent,
+      postId,
+    };
   }
 
   static async addLike({ username, postId }) {
-    const posts = database.collection("Posts");
+    const postsCollection = this.collection();
 
-    const post = await posts.find({ _id: new ObjectId(postId) }).toArray();
-    const { likes } = post[0];
+    const post = await postsCollection
+      .find({ _id: new ObjectId(String(postId)) })
+      .toArray();
+    let { likes } = post[0];
 
-    const hasLike = likes.filter((el) => el.username == username);
-    if (hasLike) throw new Error("You just allow to like once per post");
+    if (likes.length > 0) {
+      const hasLike = likes.filter((el) => el.username == username);
+      const indexLike = likes.indexOf(hasLike[0]);
+      if (indexLike >= 0) {
+        console.log(likes, "<<<sebelum");
+        likes.splice(indexLike, 1);
+        console.log(likes, "<<<perubahan");
+        await postsCollection.updateOne(
+          { _id: new ObjectId(String(postId)) },
+          { $set: { likes: likes } }
+        );
+        return "You unlike this post";
+      }
+    }
 
     const newLike = {
       username,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    await posts.updateOne(
+
+    await postsCollection.updateOne(
       { _id: new ObjectId(String(postId)) },
       { $addToSet: { likes: newLike } }
     );
 
-    return "Success like this post";
+    return "You like this post";
   }
 }
 
