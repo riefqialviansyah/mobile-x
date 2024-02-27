@@ -26,7 +26,7 @@ class User {
     const isValid = checkPassword(inputUser.password, user.password);
     if (!isValid) throw new Error("Invalid username/password");
 
-    const token = signToken({ id: user._id });
+    const token = signToken({ id: user._id, username: user.username });
     return token;
   }
 

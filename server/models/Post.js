@@ -96,6 +96,21 @@ class Post {
     const post = await posts.aggregate(agg).toArray();
     return post[0];
   }
+
+  static async addComent({ content, username, postId }) {
+    const posts = database.collection("Posts");
+    const newComent = {
+      content,
+      username,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    await posts.updateOne(
+      { _id: new ObjectId(String(postId)) },
+      { $addToSet: { comments: newComent } }
+    );
+    return "Success create coment";
+  }
 }
 
 module.exports = Post;

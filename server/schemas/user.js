@@ -47,7 +47,7 @@ const resolvers = {
       try {
         const { userLogin } = args;
         const access_token = await User.login(userLogin);
-        return access_token;
+        return { access_token };
       } catch (error) {
         throw error;
       }

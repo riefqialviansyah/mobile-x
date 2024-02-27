@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const secret = process.env.JWT_SECRET;
 
 const signToken = (paylod) => {
-  return jwt.sign({ foo: "bar" }, secret);
+  return jwt.sign(paylod, secret);
 };
 
 const verifyToken = (token) => {

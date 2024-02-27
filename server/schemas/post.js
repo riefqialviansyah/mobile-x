@@ -35,6 +35,10 @@ const typeDefs = `#graphql
     message: String
   }
 
+  type responseComent {
+    message: String
+  }
+
   type Query {
     getDataPosts: [Post]
     getDataPostById(_id: ID): Post
@@ -49,6 +53,7 @@ const typeDefs = `#graphql
 
   type Mutation{
     createPost(inputUser: inputUserCreatePost): responseCreatePost
+    createComent(content: String, postId: String): responseComent
   }
 `;
 
@@ -78,6 +83,20 @@ const resolvers = {
       try {
         const { inputUser } = args;
         const result = await Post.createPost(inputUser);
+        return { message: result };
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    createComent: async (parent, args, contexValue) => {
+      try {
+        const user = await contexValue.auth();
+        const { content, postId } = args;
+        const result = await Post.addComent({
+          content,
+          username: user.username,
+          postId,
+        });
         return { message: result };
       } catch (error) {
         console.log(error);
