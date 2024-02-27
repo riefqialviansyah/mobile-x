@@ -13,9 +13,14 @@ const {
   resolvers: followResolvers,
 } = require("./schemas/follow");
 
+const {
+  typeDefs: postTypeDefs,
+  resolvers: postResolvers,
+} = require("./schemas/post");
+
 const server = new ApolloServer({
-  typeDefs: [userTypeDefs, followTypeDefs],
-  resolvers: [userResolvers, followResolvers],
+  typeDefs: [userTypeDefs, followTypeDefs, postTypeDefs],
+  resolvers: [userResolvers, followResolvers, postResolvers],
 });
 
 startStandaloneServer(server, {
