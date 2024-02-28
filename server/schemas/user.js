@@ -15,13 +15,13 @@ const typeDefs = `#graphql
     name: String
     username: String
     email: String
-    follower: [Follow]
+    follower: [FollowUser]
     followerDetail: [User]
-    following: [Follow]
+    following: [FollowUser]
     followingDetail: [User]
   }
 
-  type Follow {
+  type FollowUser {
     _id: ID
     followingId: ID
     followerId: ID

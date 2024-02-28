@@ -1,5 +1,6 @@
 const { ObjectId } = require("mongodb");
 const { database } = require("../config/mongodb");
+const redis = require("../config/redis");
 
 class Post {
   static collection() {
@@ -21,6 +22,7 @@ class Post {
     };
 
     const result = await postsCollection.insertOne(newPost);
+    await redis.del("post:all");
     return {
       _id: result.insertedId,
       ...newPost,
@@ -57,7 +59,17 @@ class Post {
       },
     ];
 
+    const postCache = await redis.get("post:all");
+
+    if (postCache) {
+      // console.log("ini dari cahce redis");
+      const postData = JSON.parse(postCache);
+      return postData;
+    }
+    // console.log("ini dari mongodb");
     const posts = await postsCollection.aggregate(agg).toArray();
+    await redis.set("post:all", JSON.stringify(posts));
+
     return posts;
   }
 
@@ -66,7 +78,7 @@ class Post {
     const agg = [
       {
         $match: {
-          _id: new ObjectId("65ddf482fa3694265f009d73"),
+          _id: new ObjectId(String(id)),
         },
       },
       {
@@ -124,9 +136,7 @@ class Post {
       const hasLike = likes.filter((el) => el.username == username);
       const indexLike = likes.indexOf(hasLike[0]);
       if (indexLike >= 0) {
-        console.log(likes, "<<<sebelum");
         likes.splice(indexLike, 1);
-        console.log(likes, "<<<perubahan");
         await postsCollection.updateOne(
           { _id: new ObjectId(String(postId)) },
           { $set: { likes: likes } }
