@@ -66,5 +66,9 @@ export default function App() {
         </Text>
       </View>
     </SafeAreaView>
+    // Register Page
+    // <SafeAreaView>
+
+    // </SafeAreaView>
   );
 }
