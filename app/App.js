@@ -1,57 +1,70 @@
-import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
-import { StyleSheet, Text, View, Image, TextInput, Button } from "react-native";
+import { Text, View, Image, TextInput, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function App() {
-  const [input, setInput] = useState("riefqi.alviansyah1430@gmail.com");
+// import style file
+import { styles } from "./style/styleSheet";
 
-  const inputHandler = (text) => {
-    console.log(text);
+export default function App() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const loginHandler = () => {
+    console.log({ email, password });
   };
 
   return (
-    <SafeAreaView>
-      <View>
+    // Login Page
+    <SafeAreaView style={styles.containerLogin}>
+      <View style={styles.headerLogin}>
         <Image
-          style={{
-            width: 150,
-            height: 150,
-          }}
-          source={{
-            uri: "https://reactnative.dev/img/tiny_logo.png",
-          }}
+          style={styles.logoLogin}
+          source={require("./assets/x-logo.png")}
         />
-        <Image source={require("./assets/favicon.png")} />
+      </View>
+      <View style={styles.contentLogin}>
+        <Text style={styles.quoteLogin}>
+          See what's happening in the world right now.
+        </Text>
+      </View>
+      <View style={styles.formInput}>
         <TextInput
-          onChangeText={inputHandler}
-          placeholder="Enter email"
-          style={{
-            height: 40,
-            margin: 12,
-            borderWidth: 1,
-            padding: 10,
-          }}
+          style={styles.input}
+          inputMode="email"
+          placeholder="Enter Email"
+          onChangeText={setEmail}
         />
-        <Button
-          onPress={() => {
-            console.log("saya dipencer");
-          }}
-          title="Pencect Saya"
+        <TextInput
+          style={styles.input}
+          placeholder="Enter Password"
+          secureTextEntry={true}
+          onChangeText={setPassword}
         />
+        <TouchableOpacity
+          onPress={loginHandler}
+          style={styles.button}
+          activeOpacity={0.9}
+        >
+          <View>
+            <Text style={{ fontSize: 20, fontWeight: "900" }}>Login</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+      <View>
+        <Text style={{ color: "white", textAlign: "center", marginTop: 100 }}>
+          Don't have account,{" "}
+          <Text
+            style={{
+              color: "#deb887",
+              fontWeight: "bold",
+              borderRadius: 2,
+            }}
+          >
+            register
+          </Text>{" "}
+          now.
+        </Text>
       </View>
     </SafeAreaView>
   );
 }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: "#fff",
-//     alignItems: "center",
-//     justifyContent: "center",
-//   },
-//   coba: {
-//     color: "red",
-//   },
-// });
