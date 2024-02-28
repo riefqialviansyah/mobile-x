@@ -3,9 +3,10 @@ import { Text, View, Image, TextInput, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 // import style file
-import { styles } from "./style/styleSheet";
+import { styleLogin, styleRegister } from "./style/styleSheet";
 
 export default function App() {
+  // Login
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -13,62 +14,126 @@ export default function App() {
     console.log({ email, password });
   };
 
+  // Register
+  const [registerName, setRegisterName] = useState("");
+  const [registerUsername, setRegisterUsername] = useState("");
+  const [registerEmail, setRegisterEmail] = useState("");
+  const [registerPassword, setRegisterPassword] = useState("");
+
+  const registerHandler = () => {
+    console.log({
+      registerName,
+      registerUsername,
+      registerEmail,
+      registerPassword,
+    });
+  };
+
   return (
     // Login Page
-    <SafeAreaView style={styles.containerLogin}>
-      <View style={styles.headerLogin}>
+    <SafeAreaView style={styleLogin.containerLogin}>
+      <View style={styleLogin.headerLogin}>
         <Image
-          style={styles.logoLogin}
+          style={styleLogin.logoLogin}
           source={require("./assets/x-logo.png")}
         />
       </View>
-      <View style={styles.contentLogin}>
-        <Text style={styles.quoteLogin}>
-          See what's happening in the world right now.
+      <View style={styleLogin.contentLogin}>
+        <Text style={styleLogin.quoteLogin}>
+          To get started, login with your email or @username
         </Text>
       </View>
-      <View style={styles.formInput}>
+      <View style={styleLogin.formInput}>
         <TextInput
-          style={styles.input}
+          style={styleLogin.input}
           inputMode="email"
-          placeholder="Enter Email"
+          placeholderTextColor={"white"}
+          placeholder="Email or username"
           onChangeText={setEmail}
         />
         <TextInput
-          style={styles.input}
-          placeholder="Enter Password"
+          style={styleLogin.input}
+          placeholder="Password"
+          placeholderTextColor={"white"}
           secureTextEntry={true}
           onChangeText={setPassword}
         />
         <TouchableOpacity
           onPress={loginHandler}
-          style={styles.button}
-          activeOpacity={0.9}
+          style={styleLogin.buttonLogin}
+          activeOpacity={0.4}
         >
           <View>
-            <Text style={{ fontSize: 20, fontWeight: "900" }}>Login</Text>
+            <Text style={styleLogin.buttonLoginText}>Login</Text>
           </View>
         </TouchableOpacity>
       </View>
-      <View>
+      <View style={styleLogin.footerLogin}>
         <Text style={{ color: "white", textAlign: "center", marginTop: 100 }}>
           Don't have account,{" "}
-          <Text
-            style={{
-              color: "#deb887",
-              fontWeight: "bold",
-              borderRadius: 2,
-            }}
-          >
-            register
-          </Text>{" "}
-          now.
+          <Text style={styleLogin.registerLink}>register</Text> now.
         </Text>
       </View>
     </SafeAreaView>
-    // Register Page
-    // <SafeAreaView>
 
+    // Register Page
+    // <SafeAreaView style={styleRegister.containerRegister}>
+    //   <View style={styleRegister.headerRegister}>
+    //     <Image
+    //       style={styleRegister.logoRegister}
+    //       source={require("./assets/x-logo.png")}
+    //     />
+    //   </View>
+    //   <View style={styleRegister.contentRegister}>
+    //     <Text style={styleRegister.quoteRegister}>
+    //       See what's happening in the world right now.
+    //     </Text>
+    //   </View>
+    //   <View style={styleLogin.formInput}>
+    //     <TextInput
+    //       style={styleRegister.input}
+    //       inputMode="text"
+    //       placeholder="Full name"
+    //       placeholderTextColor={"white"}
+    //       onChangeText={setRegisterName}
+    //     />
+    //     <TextInput
+    //       style={styleRegister.input}
+    //       inputMode="text"
+    //       placeholder="Username"
+    //       placeholderTextColor={"white"}
+    //       onChangeText={setRegisterUsername}
+    //     />
+    //     <TextInput
+    //       style={styleRegister.input}
+    //       inputMode="email"
+    //       placeholder="Valid email"
+    //       placeholderTextColor={"white"}
+    //       onChangeText={setRegisterEmail}
+    //     />
+    //     <TextInput
+    //       style={styleRegister.input}
+    //       placeholder="Password"
+    //       placeholderTextColor={"white"}
+    //       secureTextEntry={true}
+    //       onChangeText={setRegisterPassword}
+    //     />
+    //     <TouchableOpacity
+    //       onPress={registerHandler}
+    //       style={styleRegister.buttonRegister}
+    //       activeOpacity={0.4}
+    //     >
+    //       <View>
+    //         <Text style={styleRegister.buttonRegisterText}>Register</Text>
+    //       </View>
+    //     </TouchableOpacity>
+    //   </View>
+    //   <View style={styleRegister.footerRegister}>
+    //     <Text style={{ color: "white", textAlign: "center", marginTop: 100 }}>
+    //       Already have account,{" "}
+    //       <Text style={styleRegister.loginLink}>login</Text> now.
+    //     </Text>
+    //   </View>
     // </SafeAreaView>
   );
 }
