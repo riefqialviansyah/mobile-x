@@ -35,15 +35,8 @@ const typeDefs = `#graphql
     access_token: String
   }
 
-  # Input Login
-  input loginData {
-    email: String,
-    password: String
-  }
-
   # Endpoint
   type Query {
-    login(loginData: loginData): Token
     getUserDataByUsername(username: String): User
     getUserDataById(_id: String): Profile
   }
@@ -56,24 +49,21 @@ const typeDefs = `#graphql
     password: String
   }
   
+  # Input Login
+  input loginData {
+    email: String,
+    password: String
+  }
+
   # Endpoint
   type Mutation {
     register(registerData: registerData): User
+    login(loginData: loginData): Token
   }
 `;
 
 const resolvers = {
   Query: {
-    login: async (parent, args) => {
-      try {
-        const { loginData } = args;
-
-        const result = await User.login(loginData);
-        return { username: result.username, access_token: result.token };
-      } catch (error) {
-        throw error;
-      }
-    },
     getUserDataByUsername: async (parent, args) => {
       try {
         const { username } = args;
@@ -101,6 +91,15 @@ const resolvers = {
 
         const user = await User.register(registerData);
         return user;
+      } catch (error) {
+        throw error;
+      }
+    },
+    login: async (parent, args) => {
+      try {
+        const { loginData } = args;
+        const result = await User.login(loginData);
+        return { username: result.username, access_token: result.token };
       } catch (error) {
         throw error;
       }
