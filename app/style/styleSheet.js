@@ -127,3 +127,31 @@ export const styleRegister = StyleSheet.create({
     borderRadius: 2,
   },
 });
+
+export const styleHome = StyleSheet.create({
+  container: {
+    backgroundColor: "black",
+    textAlign: "center",
+    height: "100%",
+  },
+  header: {
+    alignItems: "center",
+    height: 70,
+  },
+  logo: {
+    marginTop: 20,
+    width: 30,
+    height: 30,
+  },
+  feed: {
+    marginBottom: 80,
+  },
+  content: {
+    flex: 1,
+    flexDirection: "row",
+    borderTopWidth: 0.5,
+    borderBottomWidth: 0.5,
+    borderColor: "white",
+  },
+  boxContent: {},
+});

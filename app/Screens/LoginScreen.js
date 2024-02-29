@@ -2,15 +2,12 @@ import { Text, View, Image, TextInput, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styleLogin } from "../style/styleSheet";
 import { useState } from "react";
+import { useMutation, gql } from "@apollo/client";
 
 export default function LoginScreen({ navigation }) {
-  // Login
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const loginHandler = () => {
-    console.log({ email, password });
-  };
   return (
     // Login Page
     <SafeAreaView style={styleLogin.containerLogin}>
@@ -40,18 +37,14 @@ export default function LoginScreen({ navigation }) {
           secureTextEntry={true}
           onChangeText={setPassword}
         />
-        <TouchableOpacity
-          onPress={loginHandler}
-          style={styleLogin.buttonLogin}
-          activeOpacity={0.4}
-        >
+        <TouchableOpacity style={styleLogin.buttonLogin} activeOpacity={0.4}>
           <View>
             <Text style={styleLogin.buttonLoginText}>Login</Text>
           </View>
         </TouchableOpacity>
       </View>
       <View style={styleLogin.footerLogin}>
-        <Text style={{ color: "white", textAlign: "center", marginTop: 100 }}>
+        <Text style={{ color: "white", textAlign: "center", marginTop: 80 }}>
           Don't have account,{" "}
           <Text
             style={styleLogin.registerLink}
