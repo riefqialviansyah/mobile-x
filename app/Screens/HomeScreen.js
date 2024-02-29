@@ -1,7 +1,6 @@
-import { Text, View, Image, FlatList, ScrollView, Button } from "react-native";
+import { Text, View, Image, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styleHome } from "../style/styleSheet";
-import { useEffect, useState } from "react";
 import { gql, useQuery } from "@apollo/client";
 import { formatTime } from "../helpers/formated";
 
@@ -9,6 +8,7 @@ import { formatTime } from "../helpers/formated";
 import * as React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { AuthContex } from "../helpers/authContex";
 
 const GET_POSTS = gql`
   query Query {
@@ -42,7 +42,7 @@ const GET_POSTS = gql`
   }
 `;
 
-function Home() {
+function TweetScreen() {
   const { loading, error, data } = useQuery(GET_POSTS);
 
   console.log({ loading, error, data });
@@ -129,7 +129,9 @@ function Home() {
   );
 }
 
-function SettingsScreen({ navigation }) {
+function SettingsScreen() {
+  const { setIsLogin } = React.useContext(AuthContex);
+
   return (
     <View
       style={{
@@ -142,7 +144,7 @@ function SettingsScreen({ navigation }) {
       <Text
         style={{ color: "white" }}
         onPress={() => {
-          navigation.navigate("Login");
+          setIsLogin(false);
         }}
       >
         Logout
@@ -160,7 +162,7 @@ export default function HomeScreen() {
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
-          if (route.name === "Home") {
+          if (route.name === "Tweet") {
             iconName = focused ? "home" : "home-outline";
           } else if (route.name === "Settings") {
             iconName = focused ? "settings" : "settings-outline";
@@ -185,7 +187,7 @@ export default function HomeScreen() {
         },
       })}
     >
-      <Tab.Screen name="Home" component={Home} />
+      <Tab.Screen name="Tweet" component={TweetScreen} />
       <Tab.Screen name="Settings" component={SettingsScreen} />
     </Tab.Navigator>
   );

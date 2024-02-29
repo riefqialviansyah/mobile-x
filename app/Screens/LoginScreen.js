@@ -1,8 +1,9 @@
 import { Text, View, Image, TextInput, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styleLogin } from "../style/styleSheet";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { gql, useMutation } from "@apollo/client";
+import { AuthContex } from "../helpers/authContex";
 
 const LOGIN = gql`
   mutation Mutation($loginData: loginData) {
@@ -16,16 +17,16 @@ const LOGIN = gql`
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const [loginHandler] = useMutation(LOGIN);
+
+  const { isLogin, setIsLogin } = useContext(AuthContex);
 
   const handleSubmit = async () => {
     try {
-      if (!email || !password) throw new Error("Input data");
-      const result = await loginHandler({
+      await loginHandler({
         variables: { loginData: { email: email, password: password } },
       });
-      console.log(result);
+      setIsLogin(true);
     } catch (error) {
       console.log(error);
     }
@@ -73,7 +74,15 @@ export default function LoginScreen({ navigation }) {
       <View style={styleLogin.footerLogin}>
         <Text style={{ color: "white", textAlign: "center", marginTop: 80 }}>
           Don't have account,{" "}
-          <Text style={styleLogin.registerLink}>register</Text> now.
+          <Text
+            style={styleLogin.registerLink}
+            onPress={() => {
+              navigation.navigate("Register");
+            }}
+          >
+            register
+          </Text>{" "}
+          now.
         </Text>
       </View>
     </SafeAreaView>
