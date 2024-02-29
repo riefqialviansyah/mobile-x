@@ -91,6 +91,11 @@ export const styleRegister = StyleSheet.create({
     fontWeight: "800",
     marginBottom: 10,
   },
+  formInput: {
+    flex: 1,
+    alignItems: "center",
+    height: 200,
+  },
   input: {
     height: 55,
     margin: 12,
