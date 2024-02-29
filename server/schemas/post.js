@@ -82,6 +82,7 @@ const resolvers = {
   Mutation: {
     post: async (parent, args, contextValue) => {
       try {
+        console.log("masuk sini");
         const user = await contextValue.auth();
 
         const { dataPost } = args;

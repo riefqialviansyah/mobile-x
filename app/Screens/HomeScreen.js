@@ -5,6 +5,11 @@ import { useEffect, useState } from "react";
 import { gql, useQuery } from "@apollo/client";
 import { formatTime } from "../helpers/formated";
 
+// tab navigator
+import * as React from "react";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import Ionicons from "@expo/vector-icons/Ionicons";
+
 const GET_POSTS = gql`
   query Query {
     getDataPosts {
@@ -37,7 +42,7 @@ const GET_POSTS = gql`
   }
 `;
 
-export default function HomeScreen() {
+function Home() {
   const { loading, error, data } = useQuery(GET_POSTS);
 
   console.log({ loading, error, data });
@@ -87,7 +92,7 @@ export default function HomeScreen() {
                       marginTop: 10,
                     }}
                   >
-                    {item.detailAuthor.username}
+                    @{item.detailAuthor.username}
                     {" ~ "}
                     <Text style={{ color: "#a9a9a9" }}>
                       {formatTime(item.createdAt)}
@@ -121,5 +126,67 @@ export default function HomeScreen() {
         />
       </View>
     </SafeAreaView>
+  );
+}
+
+function SettingsScreen({ navigation }) {
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "black",
+      }}
+    >
+      <Text
+        style={{ color: "white" }}
+        onPress={() => {
+          navigation.navigate("Login");
+        }}
+      >
+        Logout
+      </Text>
+    </View>
+  );
+}
+
+const Tab = createBottomTabNavigator();
+
+export default function HomeScreen() {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+
+          if (route.name === "Home") {
+            iconName = focused ? "home" : "home-outline";
+          } else if (route.name === "Settings") {
+            iconName = focused ? "settings" : "settings-outline";
+          }
+
+          // You can return any component that you like here!
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: "tomato",
+        tabBarInactiveTintColor: "white",
+        headerShown: false,
+        tabBarBackground: () => {
+          return (
+            <View
+              style={{
+                backgroundColor: "black",
+                width: "100%",
+                height: "100%",
+              }}
+            ></View>
+          );
+        },
+      })}
+    >
+      <Tab.Screen name="Home" component={Home} />
+      <Tab.Screen name="Settings" component={SettingsScreen} />
+    </Tab.Navigator>
   );
 }

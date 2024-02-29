@@ -37,7 +37,13 @@ export default function LoginScreen({ navigation }) {
           secureTextEntry={true}
           onChangeText={setPassword}
         />
-        <TouchableOpacity style={styleLogin.buttonLogin} activeOpacity={0.4}>
+        <TouchableOpacity
+          style={styleLogin.buttonLogin}
+          activeOpacity={0.4}
+          onPress={() => {
+            navigation.navigate("Home");
+          }}
+        >
           <View>
             <Text style={styleLogin.buttonLoginText}>Login</Text>
           </View>
