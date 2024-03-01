@@ -10,6 +10,9 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { AuthContex } from "../helpers/authContex";
 
+// import component
+import CreatePostScreen from "./CreatePostScreen";
+
 const GET_POSTS = gql`
   query Query {
     getDataPosts {
@@ -164,7 +167,7 @@ function SettingsScreen() {
       }}
     >
       <Text
-        style={{ color: "white" }}
+        style={{ color: "white", fontSize: 32 }}
         onPress={() => {
           setIsLogin(false);
         }}
@@ -188,6 +191,8 @@ export default function HomeScreen() {
             iconName = focused ? "home" : "home-outline";
           } else if (route.name === "Settings") {
             iconName = focused ? "settings" : "settings-outline";
+          } else if (route.name === "Create Post") {
+            iconName = focused ? "add" : "add-outline";
           }
 
           // You can return any component that you like here!
@@ -210,6 +215,7 @@ export default function HomeScreen() {
       })}
     >
       <Tab.Screen name="Tweet" component={TweetScreen} />
+      <Tab.Screen name="Create Post" component={CreatePostScreen} />
       <Tab.Screen name="Settings" component={SettingsScreen} />
     </Tab.Navigator>
   );
