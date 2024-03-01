@@ -6,7 +6,7 @@ import { gql, useMutation } from "@apollo/client";
 import { AuthContex } from "../helpers/authContex";
 
 const LOGIN = gql`
-  mutation Mutation($loginData: loginData) {
+  mutation Login($loginData: loginData) {
     login(loginData: $loginData) {
       access_token
       username
@@ -15,16 +15,18 @@ const LOGIN = gql`
 `;
 
 export default function LoginScreen({ navigation }) {
-  const [email, setEmail] = useState("");
+  const [emailOrUsername, setEmailOrUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loginHandler] = useMutation(LOGIN);
 
-  const { isLogin, setIsLogin } = useContext(AuthContex);
+  const { setIsLogin } = useContext(AuthContex);
 
   const handleSubmit = async () => {
     try {
       await loginHandler({
-        variables: { loginData: { email: email, password: password } },
+        variables: {
+          loginData: { emailOrUsername: emailOrUsername, password: password },
+        },
       });
       setIsLogin(true);
     } catch (error) {
@@ -52,7 +54,7 @@ export default function LoginScreen({ navigation }) {
           inputMode="email"
           placeholderTextColor={"white"}
           placeholder="Email or username"
-          onChangeText={setEmail}
+          onChangeText={setEmailOrUsername}
         />
         <TextInput
           style={styleLogin.input}

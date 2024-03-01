@@ -1,4 +1,4 @@
-import { Text, View, Image, FlatList } from "react-native";
+import { Text, View, Image, FlatList, TouchableHighlight } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styleHome } from "../style/styleSheet";
 import { gql, useQuery } from "@apollo/client";
@@ -42,7 +42,7 @@ const GET_POSTS = gql`
   }
 `;
 
-function TweetScreen() {
+function TweetScreen({ navigation }) {
   const { loading, error, data } = useQuery(GET_POSTS);
 
   console.log({ loading, error, data });
@@ -84,22 +84,34 @@ function TweetScreen() {
                   />
                 </View>
                 <View style={styleHome.boxContent}>
-                  <Text
+                  <View
                     style={{
-                      color: "white",
-                      fontSize: 18,
-                      fontWeight: "bold",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
                       marginTop: 10,
                     }}
                   >
-                    @{item.detailAuthor.username}
-                    {" ~ "}
-                    <Text style={{ color: "#a9a9a9" }}>
-                      {formatTime(item.createdAt)}
+                    <Text
+                      style={{
+                        color: "white",
+                        fontSize: 18,
+                        fontWeight: "bold",
+                        fontStyle: "italic",
+                      }}
+                    >
+                      @{item.detailAuthor.username}
                     </Text>
-                  </Text>
+                    <Text
+                      style={{
+                        color: "#a9a9a9",
+                        fontSize: 18,
+                      }}
+                    >
+                      ~{formatTime(item.createdAt)}
+                    </Text>
+                  </View>
                   <Text
-                    style={{ color: "#fff8dc", fontSize: 18, marginBottom: 5 }}
+                    style={{ color: "#f0ffff", fontSize: 18, marginBottom: 5 }}
                   >
                     {item.content}
                   </Text>
@@ -118,6 +130,16 @@ function TweetScreen() {
                       source={require("../assets/comments-white.png")}
                     />
                     <Text style={{ color: "white" }}>{item.likes.length}</Text>
+                    <TouchableHighlight
+                      onPress={() => {
+                        navigation.navigate("Detail Post");
+                      }}
+                    >
+                      <Image
+                        style={{ width: 36, height: 26, marginLeft: 5 }}
+                        source={require("../assets/eye-icon.png")}
+                      />
+                    </TouchableHighlight>
                   </View>
                 </View>
               </View>

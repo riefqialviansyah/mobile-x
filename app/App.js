@@ -7,6 +7,7 @@ import client from "./config/apollo";
 import LoginScreen from "./Screens/LoginScreen";
 import RegisterScreen from "./Screens/RegisterScreen";
 import HomeScreen from "./Screens/HomeScreen";
+import DetailPostScreen from "./Screens/DetailPostScreen";
 
 // import apolloContex
 import { AuthContex } from "./helpers/authContex";
@@ -15,7 +16,7 @@ import { useState } from "react";
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
 
   return (
     <AuthContex.Provider value={{ isLogin, setIsLogin }}>
@@ -25,6 +26,15 @@ export default function App() {
             {isLogin ? (
               <>
                 <Stack.Screen name="Home" component={HomeScreen} />
+                <Stack.Screen
+                  name="Detail Post"
+                  component={DetailPostScreen}
+                  options={{
+                    headerShown: true,
+                    headerStyle: { backgroundColor: "black" },
+                    headerTintColor: "white",
+                  }}
+                />
               </>
             ) : (
               <>

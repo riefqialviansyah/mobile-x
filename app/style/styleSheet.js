@@ -144,7 +144,7 @@ export const styleHome = StyleSheet.create({
     height: 30,
   },
   feed: {
-    marginBottom: 80,
+    marginBottom: 70,
   },
   content: {
     flex: 1,
