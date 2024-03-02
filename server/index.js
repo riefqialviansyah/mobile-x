@@ -30,6 +30,7 @@ startStandaloneServer(server, {
   context: async ({ req, res }) => {
     return {
       auth: async () => {
+        // console.log(req.headers, "<<<<<< headers");
         const { authorization } = req.headers;
         if (!authorization) throw new Error("Invalid token");
 

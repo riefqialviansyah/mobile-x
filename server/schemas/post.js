@@ -47,10 +47,11 @@ const typeDefs = `#graphql
 
   input dataPost {
     content: String
-    tags: [String]
+    tags: String
     imgUrl: String
   }
 
+  # Endpoint
   type Mutation{
     post(dataPost: dataPost): Post
     comment(content: String, postId: String): Comment
@@ -60,8 +61,9 @@ const typeDefs = `#graphql
 
 const resolvers = {
   Query: {
-    getDataPosts: async () => {
+    getDataPosts: async (parent, args, contextValue) => {
       try {
+        await contextValue.auth();
         const posts = await Post.getPosts();
         return posts;
       } catch (error) {

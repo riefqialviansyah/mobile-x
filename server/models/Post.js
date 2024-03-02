@@ -10,6 +10,11 @@ class Post {
   static async createPost({ content, tags, imgUrl, authorId }) {
     const postsCollection = this.collection();
 
+    const tmpTags = tags.split(" ");
+    tags = tmpTags.filter((el) => {
+      return el != "";
+    });
+
     const newPost = {
       content,
       tags,

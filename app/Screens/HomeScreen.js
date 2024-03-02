@@ -3,6 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { styleHome } from "../style/styleSheet";
 import { gql, useQuery } from "@apollo/client";
 import { formatTime } from "../helpers/formated";
+import * as SecureStore from "expo-secure-store";
 
 // tab navigator
 import * as React from "react";
@@ -52,8 +53,15 @@ function TweetScreen({ navigation }) {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>"Loading..."</Text>
+      <View
+        style={{
+          backgroundColor: "black",
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Text style={{ color: "white" }}>Please wait...</Text>
       </View>
     );
   }
@@ -110,7 +118,7 @@ function TweetScreen({ navigation }) {
                         fontSize: 18,
                       }}
                     >
-                      ~{formatTime(item.createdAt)}
+                      ~ {formatTime(item.createdAt)}
                     </Text>
                   </View>
                   <Text
@@ -167,9 +175,10 @@ function SettingsScreen() {
       }}
     >
       <Text
-        style={{ color: "white", fontSize: 32 }}
-        onPress={() => {
+        style={{ color: "white", fontSize: 32, fontWeight: "bold" }}
+        onPress={async () => {
           setIsLogin(false);
+          await SecureStore.deleteItemAsync("access_token");
         }}
       >
         Logout

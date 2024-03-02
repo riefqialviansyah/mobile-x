@@ -155,3 +155,64 @@ export const styleHome = StyleSheet.create({
   },
   boxContent: {},
 });
+
+export const createPostStyle = StyleSheet.create({
+  containerRegister: {
+    backgroundColor: "black",
+    textAlign: "center",
+    flex: 1,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 15,
+  },
+  headerExit: {
+    fontSize: 24,
+    color: "white",
+    marginLeft: 20,
+    fontWeight: "bold",
+  },
+  headerPosting: {
+    backgroundColor: "#1e90ff",
+    padding: 8,
+    borderRadius: 20,
+    marginRight: 20,
+    fontSize: 18,
+    color: "white",
+    width: 100,
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+  input: {
+    marginTop: 20,
+    alignItems: "center",
+  },
+  content: {
+    width: "90%",
+    height: 200,
+    borderBottomWidth: 0.2,
+    borderColor: "white",
+  },
+  inptContent: {
+    color: "white",
+    fontSize: 18,
+    padding: 10,
+  },
+  imgUrl: {
+    width: "90%",
+    color: "white",
+    fontSize: 18,
+    padding: 10,
+    borderBottomWidth: 0.2,
+    borderColor: "white",
+  },
+  tags: {
+    width: "90%",
+    color: "white",
+    fontSize: 18,
+    padding: 10,
+    borderBottomWidth: 0.2,
+    borderColor: "white",
+  },
+});

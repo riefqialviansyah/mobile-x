@@ -4,6 +4,7 @@ import { styleLogin } from "../style/styleSheet";
 import { useContext, useState } from "react";
 import { gql, useMutation } from "@apollo/client";
 import { AuthContex } from "../helpers/authContex";
+import * as SecureStore from "expo-secure-store";
 
 const LOGIN = gql`
   mutation Login($loginData: loginData) {
@@ -23,11 +24,12 @@ export default function LoginScreen({ navigation }) {
 
   const handleSubmit = async () => {
     try {
-      await loginHandler({
+      const { data } = await loginHandler({
         variables: {
           loginData: { emailOrUsername: emailOrUsername, password: password },
         },
       });
+      await SecureStore.setItemAsync("access_token", data.login.access_token);
       setIsLogin(true);
     } catch (error) {
       console.log(error);

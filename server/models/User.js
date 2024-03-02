@@ -46,7 +46,6 @@ class User {
 
   static async login(inputUser) {
     const userCollection = this.collection();
-
     if (!inputUser.emailOrUsername)
       throw new Error("Email or username is required");
 

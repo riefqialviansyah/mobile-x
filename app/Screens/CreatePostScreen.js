@@ -1,104 +1,110 @@
 import { Text, View, Image, TextInput, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { styleRegister } from "../style/styleSheet";
+import { createPostStyle } from "../style/styleSheet";
 import { useState } from "react";
 import { gql, useMutation } from "@apollo/client";
 
-const REGISTER = gql`
-  mutation Mutation($registerData: registerData) {
-    register(registerData: $registerData) {
-      email
-      name
-      username
+const POSTS = gql`
+  mutation Mutation($dataPost: dataPost) {
+    post(dataPost: $dataPost) {
       _id
+      content
+      tags
+      imgUrl
+      authorId
+      comments {
+        postId
+        content
+        username
+        createdAt
+        updatedAt
+      }
+      likes {
+        username
+        createdAt
+        updatedAt
+      }
+      createdAt
+      updatedAt
+      detailAuthor {
+        _id
+        name
+        username
+        email
+      }
     }
   }
 `;
 
 export default function CreatePostScreen({ navigation }) {
-  const [registerName, setRegisterName] = useState("");
-  const [registerUsername, setRegisterUsername] = useState("");
-  const [registerEmail, setRegisterEmail] = useState("");
-  const [registerPassword, setRegisterPassword] = useState("");
+  const [content, setContent] = useState("");
+  const [imgUrl, setImgUrl] = useState("");
+  const [tags, setTags] = useState("");
 
-  const [registerHandler] = useMutation(REGISTER);
+  const [postHandler] = useMutation(POSTS);
 
-  const registerSubmit = async () => {
+  const postSubmit = async () => {
     try {
-      await registerHandler({
+      await postHandler({
         variables: {
-          registerData: {
-            name: registerName,
-            email: registerEmail,
-            username: registerUsername,
-            password: registerPassword,
+          dataPost: {
+            content,
+            tags,
+            imgUrl,
           },
         },
       });
-      navigation.navigate("Login");
+      setContent("");
+      setImgUrl("");
+      setTags("");
+      navigation.navigate("Tweet");
     } catch (error) {
       console.log(error);
     }
   };
 
   return (
-    <SafeAreaView style={styleRegister.containerRegister}>
-      <View style={styleRegister.headerRegister}>
-        <Image
-          style={styleRegister.logoRegister}
-          source={require("../assets/x-logo.png")}
-        />
-      </View>
-      <View style={styleRegister.contentRegister}>
-        <Text
-          style={{
-            textAlign: "center",
-            color: "white",
-            fontSize: 32,
-            fontWeight: "bold",
-          }}
-        >
-          Tell everyone what happen in your live
-        </Text>
-      </View>
-      <View style={styleRegister.formInput}>
-        <TextInput
-          style={styleRegister.input}
-          inputMode="text"
-          placeholder="Full name"
-          placeholderTextColor={"white"}
-          onChangeText={setRegisterName}
-        />
-        <TextInput
-          style={styleRegister.input}
-          inputMode="text"
-          placeholder="Username"
-          placeholderTextColor={"white"}
-          onChangeText={setRegisterUsername}
-        />
-        <TextInput
-          style={styleRegister.input}
-          inputMode="email"
-          placeholder="Valid email"
-          placeholderTextColor={"white"}
-          onChangeText={setRegisterEmail}
-        />
-        <TextInput
-          style={styleRegister.input}
-          placeholder="Password"
-          placeholderTextColor={"white"}
-          secureTextEntry={true}
-          onChangeText={setRegisterPassword}
-        />
-        <TouchableOpacity
-          onPress={registerSubmit}
-          style={styleRegister.buttonRegister}
-          activeOpacity={0.4}
-        >
-          <View>
-            <Text style={styleRegister.buttonRegisterText}>Post</Text>
-          </View>
+    <SafeAreaView style={createPostStyle.containerRegister}>
+      <View style={createPostStyle.header}>
+        <TouchableOpacity>
+          <Text
+            style={createPostStyle.headerExit}
+            onPress={() => {
+              navigation.navigate("Tweet");
+            }}
+          >
+            X
+          </Text>
         </TouchableOpacity>
+        <TouchableOpacity onPress={postSubmit}>
+          <Text style={createPostStyle.headerPosting}>Posting</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={createPostStyle.input}>
+        <View style={createPostStyle.content}>
+          <TextInput
+            id="content"
+            style={createPostStyle.inptContent}
+            placeholder="Tell everyone what happen?"
+            placeholderTextColor={"#a9a9a9"}
+            multiline={true}
+            onChangeText={setContent}
+          ></TextInput>
+        </View>
+        <TextInput
+          placeholder="Share your picture? (url image)"
+          placeholderTextColor={"#a9a9a9"}
+          style={createPostStyle.imgUrl}
+          multiline={true}
+          onChangeText={setImgUrl}
+        ></TextInput>
+        <TextInput
+          placeholder="Give a tag?"
+          placeholderTextColor={"#a9a9a9"}
+          style={createPostStyle.tags}
+          multiline={true}
+          onChangeText={setTags}
+        ></TextInput>
       </View>
     </SafeAreaView>
   );

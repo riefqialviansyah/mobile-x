@@ -2,6 +2,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ApolloProvider } from "@apollo/client";
 import client from "./config/apollo";
+import * as SecureStore from "expo-secure-store";
 
 // import screen
 import LoginScreen from "./Screens/LoginScreen";
@@ -11,12 +12,46 @@ import DetailPostScreen from "./Screens/DetailPostScreen";
 
 // import apolloContex
 import { AuthContex } from "./helpers/authContex";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { View, Text } from "react-native";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const checkHasLogin = async () => {
+    try {
+      let token = await SecureStore.getItemAsync("access_token");
+      if (token) {
+        setIsLogin(true);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    checkHasLogin();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <View
+        style={{
+          backgroundColor: "black",
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Text style={{ color: "white" }}>Please wait...</Text>
+      </View>
+    );
+  }
 
   return (
     <AuthContex.Provider value={{ isLogin, setIsLogin }}>

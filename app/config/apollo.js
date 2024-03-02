@@ -1,7 +1,25 @@
-import { ApolloClient, InMemoryCache } from "@apollo/client";
+import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
+import * as SecureStore from "expo-secure-store";
+
+const httpLink = createHttpLink({
+  uri: "https://324e-110-136-217-80.ngrok-free.app",
+});
+
+const authLink = setContext(async (_, { headers }) => {
+  // get the authentication token from local storage if it exists
+  const token = await SecureStore.getItemAsync("access_token");
+  // return the headers to the context so httpLink can read them
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : "",
+    },
+  };
+});
 
 const client = new ApolloClient({
-  uri: "https://34ee-110-136-217-80.ngrok-free.app",
+  link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
 });
 
