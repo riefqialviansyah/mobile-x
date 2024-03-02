@@ -113,6 +113,7 @@ class Post {
 
   static async addComent({ content, username, postId }) {
     const postsCollection = this.collection();
+    console.log("masuk siniii<<<<<");
     const newComent = {
       content,
       username,

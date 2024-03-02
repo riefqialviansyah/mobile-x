@@ -55,7 +55,7 @@ const LIKE = gql`
 `;
 
 function TweetScreen({ navigation }) {
-  const { loading, error, data, refetch } = useQuery(GET_POSTS);
+  const { loading, error, data, refetch: refreshPost } = useQuery(GET_POSTS);
   const [likeHandler] = useMutation(LIKE);
 
   // console.log({ loading, error, data });
@@ -80,7 +80,7 @@ function TweetScreen({ navigation }) {
   const likeSubmit = async (postId) => {
     try {
       const result = await likeHandler({ variables: { postId } });
-      await refetch();
+      await refreshPost();
       console.log(result.data.like.message);
     } catch (error) {
       console.log(error);
@@ -162,16 +162,26 @@ function TweetScreen({ navigation }) {
                       />
                     </TouchableHighlight>
                     <Text style={{ color: "white" }}>{item.likes.length}</Text>
-                    <Image
-                      style={{ width: 28, height: 24, marginLeft: 5 }}
-                      source={require("../assets/comments-white.png")}
-                    />
+                    <TouchableHighlight
+                      onPress={() => {
+                        navigation.navigate("Detail Post", {
+                          postId: item._id,
+                        });
+                      }}
+                    >
+                      <Image
+                        style={{ width: 28, height: 24, marginLeft: 5 }}
+                        source={require("../assets/comments-white.png")}
+                      />
+                    </TouchableHighlight>
                     <Text style={{ color: "white" }}>
                       {item.comments.length}
                     </Text>
                     <TouchableHighlight
                       onPress={() => {
-                        navigation.navigate("Detail Post");
+                        navigation.navigate("Detail Post", {
+                          postId: item._id,
+                        });
                       }}
                     >
                       <Image

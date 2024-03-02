@@ -74,7 +74,6 @@ const resolvers = {
       try {
         const { _id: id } = args;
         const post = await Post.getPostById(id);
-        console.log(post);
         return post;
       } catch (error) {
         throw error;
@@ -101,7 +100,7 @@ const resolvers = {
     comment: async (parent, args, contexValue) => {
       try {
         const user = await contexValue.auth();
-
+        console.log("masuk schema add coment");
         const { content, postId } = args;
         const result = await Post.addComent({
           content,

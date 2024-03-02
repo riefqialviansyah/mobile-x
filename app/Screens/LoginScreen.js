@@ -30,6 +30,7 @@ export default function LoginScreen({ navigation }) {
         },
       });
       await SecureStore.setItemAsync("access_token", data.login.access_token);
+      await SecureStore.setItemAsync("username", data.login.username);
       setIsLogin(true);
     } catch (error) {
       console.log(error);
