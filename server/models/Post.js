@@ -123,6 +123,8 @@ class Post {
       { _id: new ObjectId(String(postId)) },
       { $addToSet: { comments: newComent } }
     );
+
+    await redis.del("post:all");
     return {
       ...newComent,
       postId,
@@ -146,6 +148,7 @@ class Post {
           { _id: new ObjectId(String(postId)) },
           { $set: { likes: likes } }
         );
+        await redis.del("post:all");
         return "You unlike this post";
       }
     }
@@ -160,7 +163,7 @@ class Post {
       { _id: new ObjectId(String(postId)) },
       { $addToSet: { likes: newLike } }
     );
-
+    await redis.del("post:all");
     return "You like this post";
   }
 }

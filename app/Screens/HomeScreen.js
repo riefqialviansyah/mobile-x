@@ -1,7 +1,7 @@
 import { Text, View, Image, FlatList, TouchableHighlight } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styleHome } from "../style/styleSheet";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import { formatTime } from "../helpers/formated";
 import * as SecureStore from "expo-secure-store";
 
@@ -46,10 +46,19 @@ const GET_POSTS = gql`
   }
 `;
 
-function TweetScreen({ navigation }) {
-  const { loading, error, data } = useQuery(GET_POSTS);
+const LIKE = gql`
+  mutation Mutation($postId: ID) {
+    like(postId: $postId) {
+      message
+    }
+  }
+`;
 
-  console.log({ loading, error, data });
+function TweetScreen({ navigation }) {
+  const { loading, error, data, refetch } = useQuery(GET_POSTS);
+  const [likeHandler] = useMutation(LIKE);
+
+  // console.log({ loading, error, data });
 
   if (loading) {
     return (
@@ -68,6 +77,16 @@ function TweetScreen({ navigation }) {
 
   if (error) return <Text>`Error! ${error.message}`</Text>;
 
+  const likeSubmit = async (postId) => {
+    try {
+      const result = await likeHandler({ variables: { postId } });
+      await refetch();
+      console.log(result.data.like.message);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <SafeAreaView style={styleHome.container}>
       <View style={styleHome.header}>
@@ -81,6 +100,7 @@ function TweetScreen({ navigation }) {
         <FlatList
           data={data.getDataPosts}
           renderItem={({ item }) => {
+            // console.log(item, "<<<<<,");
             return (
               <View style={styleHome.content}>
                 <View>
@@ -131,16 +151,24 @@ function TweetScreen({ navigation }) {
                     style={{ width: 300, height: 200, borderRadius: 20 }}
                   ></Image>
                   <View style={{ flexDirection: "row", padding: 10, gap: 5 }}>
-                    <Image
-                      style={{ width: 28, height: 24 }}
-                      source={require("../assets/like-white.png")}
-                    />
+                    <TouchableHighlight
+                      onPress={() => {
+                        likeSubmit(item._id);
+                      }}
+                    >
+                      <Image
+                        style={{ width: 28, height: 24 }}
+                        source={require("../assets/like-white.png")}
+                      />
+                    </TouchableHighlight>
                     <Text style={{ color: "white" }}>{item.likes.length}</Text>
                     <Image
                       style={{ width: 28, height: 24, marginLeft: 5 }}
                       source={require("../assets/comments-white.png")}
                     />
-                    <Text style={{ color: "white" }}>{item.likes.length}</Text>
+                    <Text style={{ color: "white" }}>
+                      {item.comments.length}
+                    </Text>
                     <TouchableHighlight
                       onPress={() => {
                         navigation.navigate("Detail Post");
