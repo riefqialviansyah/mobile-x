@@ -66,8 +66,8 @@ const COMMENT = gql`
 export default function DetailPostScreen({ navigation, route }) {
   const [likeHandler] = useMutation(LIKE);
   const { postId } = route.params;
-  const [username, setUsername] = useState("");
   const [newComment, setNewComment] = useState("");
+  const [username, setUsername] = useState("");
 
   const { loading, error, data, refetch } = useQuery(GET_DETAIL_POST, {
     variables: { id: postId },
@@ -95,7 +95,7 @@ export default function DetailPostScreen({ navigation, route }) {
     try {
       const result = await likeHandler({ variables: { postId } });
       await refetch();
-      console.log(result.data.like.message); // masih error
+      console.log(result.data.like.message);
     } catch (error) {
       console.log(error);
     }
@@ -112,18 +112,18 @@ export default function DetailPostScreen({ navigation, route }) {
     }
   };
 
-  useEffect(() => {
-    async function getUsername() {
-      try {
-        const result = await SecureStore.getItemAsync("username");
-        // console.log(result, "<<< target username");
-        setUsername(result);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    getUsername();
-  }, []);
+  // useEffect(() => {
+  //   async function getUsername() {
+  //     try {
+  //       const result = await SecureStore.getItemAsync("username");
+  //       console.log(result, "get username<<<<<<<<<,");
+  //       setUsername(result);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   }
+  //   getUsername();
+  // }, []);
 
   return (
     <SafeAreaView style={styleHome.container}>

@@ -81,7 +81,7 @@ class User {
     return user;
   }
 
-  static async getUserById(id) {
+  static async getUserById({ id }) {
     const userCollection = this.collection();
 
     const agg = [

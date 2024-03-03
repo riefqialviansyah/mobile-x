@@ -41,10 +41,21 @@ export default function CreatePostScreen({ navigation }) {
   const [imgUrl, setImgUrl] = useState("");
   const [tags, setTags] = useState("");
 
+  const contenthandler = (text) => {
+    setContent(text);
+  };
+  const imgHandler = (text) => {
+    setImgUrl(text);
+  };
+  const taghandler = (text) => {
+    setTags(text);
+  };
+
   const [postHandler] = useMutation(POSTS);
 
   const postSubmit = async () => {
     try {
+      // console.log({ content, imgUrl, tags });
       await postHandler({
         variables: {
           dataPost: {
@@ -57,7 +68,7 @@ export default function CreatePostScreen({ navigation }) {
       setContent("");
       setImgUrl("");
       setTags("");
-      navigation.navigate("Tweet");
+      navigation.navigate("Tweet", { reload: true });
     } catch (error) {
       console.log(error);
     }
@@ -88,7 +99,8 @@ export default function CreatePostScreen({ navigation }) {
             placeholder="Tell everyone what happen?"
             placeholderTextColor={"#a9a9a9"}
             multiline={true}
-            onChangeText={setContent}
+            onChangeText={contenthandler}
+            value={content}
           ></TextInput>
         </View>
         <TextInput
@@ -96,14 +108,16 @@ export default function CreatePostScreen({ navigation }) {
           placeholderTextColor={"#a9a9a9"}
           style={createPostStyle.imgUrl}
           multiline={true}
-          onChangeText={setImgUrl}
+          onChangeText={imgHandler}
+          value={imgUrl}
         ></TextInput>
         <TextInput
           placeholder="Give a tag?"
           placeholderTextColor={"#a9a9a9"}
           style={createPostStyle.tags}
           multiline={true}
-          onChangeText={setTags}
+          onChangeText={taghandler}
+          value={tags}
         ></TextInput>
       </View>
     </SafeAreaView>

@@ -19,6 +19,7 @@ const {
 } = require("./schemas/post");
 const { verifyToken } = require("./helpers/token");
 const User = require("./models/User");
+const { ObjectId } = require("mongodb");
 
 const server = new ApolloServer({
   typeDefs: [userTypeDefs, followTypeDefs, postTypeDefs],
@@ -30,7 +31,6 @@ startStandaloneServer(server, {
   context: async ({ req, res }) => {
     return {
       auth: async () => {
-        // console.log(req.headers, "<<<<<< headers");
         const { authorization } = req.headers;
         if (!authorization) throw new Error("Invalid token");
 
@@ -40,7 +40,17 @@ startStandaloneServer(server, {
         const decodeToken = verifyToken(token);
         if (!decodeToken.id) throw new Error("Invalid token");
 
-        const user = await User.getUserById(decodeToken.id);
+        const userCollection = User.collection();
+        const options = {
+          projection: { password: 0 },
+        };
+        const user = await userCollection.findOne(
+          {
+            _id: new ObjectId(String(decodeToken.id)),
+          },
+          options
+        );
+        console.log(user);
         if (!user) throw new Error("Invalid token");
 
         return { _id: user._id, username: user.username };

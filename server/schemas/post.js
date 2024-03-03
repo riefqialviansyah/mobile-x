@@ -100,7 +100,7 @@ const resolvers = {
     comment: async (parent, args, contexValue) => {
       try {
         const user = await contexValue.auth();
-        console.log("masuk schema add coment");
+
         const { content, postId } = args;
         const result = await Post.addComent({
           content,

@@ -1,6 +1,5 @@
 export const formatTime = (date) => {
   const postDate = new Date(date);
-  // console.log(postDate, date, "<<<<<<");
   const currentDate = new Date();
 
   let Difference_In_Time = currentDate.getTime() - postDate.getTime();
