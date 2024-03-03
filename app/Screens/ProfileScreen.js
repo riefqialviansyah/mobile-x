@@ -212,13 +212,13 @@ export default function ProfileScreen() {
                       source={require("../assets/dummy-profile.jpg")}
                     />
                     <View>
-                      <Text style={{ color: "white" }}>Riefqi Alviansyah</Text>
+                      <Text style={{ color: "white" }}>{item.item.name}</Text>
                       <Text style={{ color: "white", fontStyle: "italic" }}>
-                        @riefqialviansyah
+                        @{item.item.username}
                       </Text>
                     </View>
                     <TouchableHighlight>
-                      <Text style={{ color: "white" }}>Unfollow</Text>
+                      <Text style={{ color: "white" }}>Delete</Text>
                     </TouchableHighlight>
                   </View>
                 );

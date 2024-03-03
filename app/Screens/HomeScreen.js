@@ -9,6 +9,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import CreatePostScreen from "./CreatePostScreen";
 import TweetScreen from "./TweetScreen";
 import ProfileScreen from "./ProfileScreen";
+import SearchUserScreen from "./SearchUserScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -25,6 +26,8 @@ export default function HomeScreen() {
             iconName = focused ? "person" : "person-outline";
           } else if (route.name === "Create Post") {
             iconName = focused ? "add" : "add-outline";
+          } else if (route.name === "Search") {
+            iconName = focused ? "search" : "search-outline";
           }
 
           // You can return any component that you like here!
@@ -47,6 +50,7 @@ export default function HomeScreen() {
       })}
     >
       <Tab.Screen name="Tweet" component={TweetScreen} />
+      <Tab.Screen name="Search" component={SearchUserScreen} />
       <Tab.Screen name="Create Post" component={CreatePostScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
