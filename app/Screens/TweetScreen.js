@@ -94,7 +94,7 @@ export default function TweetScreen({ navigation, route }) {
   if (route.params && route.params.reload) {
     refreshPost();
   }
-
+  // console.log(data);
   return (
     <SafeAreaView style={styleHome.container}>
       <View style={styleHome.header}>
@@ -148,12 +148,32 @@ export default function TweetScreen({ navigation, route }) {
                     </Text>
                   </View>
                   <Text
-                    style={{ color: "#f0ffff", fontSize: 18, marginBottom: 5 }}
+                    style={{
+                      color: "#f0ffff",
+                      fontSize: 18,
+                      marginBottom: 5,
+                      width: 310,
+                    }}
                   >
                     {item.content}
                   </Text>
+                  <View>
+                    {item.tags.map((el) => {
+                      return (
+                        <Text
+                          style={{
+                            color: "#f0ffff",
+                            fontSize: 18,
+                            width: 310,
+                          }}
+                        >
+                          #{el}
+                        </Text>
+                      );
+                    })}
+                  </View>
                   <Image
-                    source={{ uri: "https://picsum.photos/200/300" }}
+                    source={{ uri: item.imgUrl }}
                     style={{ width: 300, height: 200, borderRadius: 20 }}
                   ></Image>
                   <View style={{ flexDirection: "row", padding: 10, gap: 5 }}>
@@ -171,6 +191,7 @@ export default function TweetScreen({ navigation, route }) {
                     <TouchableHighlight
                       onPress={() => {
                         navigation.navigate("Detail Post", {
+                          nama: "sayang",
                           postId: item._id,
                         });
                       }}

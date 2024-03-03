@@ -20,6 +20,7 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   const [isLogin, setIsLogin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [usernameLogin, setUsernameLogin] = useState("");
 
   const checkHasLogin = async () => {
     try {
@@ -54,7 +55,9 @@ export default function App() {
   }
 
   return (
-    <AuthContex.Provider value={{ isLogin, setIsLogin }}>
+    <AuthContex.Provider
+      value={{ isLogin, setIsLogin, usernameLogin, setUsernameLogin }}
+    >
       <ApolloProvider client={client}>
         <NavigationContainer>
           <Stack.Navigator screenOptions={{ headerShown: false }}>

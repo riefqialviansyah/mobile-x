@@ -1,4 +1,6 @@
-import { Text, View } from "react-native";
+import { View } from "react-native";
+import * as SecureStore from "expo-secure-store";
+import { useContext } from "react";
 
 // tab navigator
 import * as React from "react";
@@ -10,10 +12,26 @@ import CreatePostScreen from "./CreatePostScreen";
 import TweetScreen from "./TweetScreen";
 import ProfileScreen from "./ProfileScreen";
 import SearchUserScreen from "./SearchUserScreen";
+import { AuthContex } from "../helpers/authContex";
 
 const Tab = createBottomTabNavigator();
 
 export default function HomeScreen() {
+  const { setUsernameLogin } = useContext(AuthContex);
+
+  const getUsernameLogin = async () => {
+    try {
+      const username = await SecureStore.getItemAsync("username");
+      setUsernameLogin(username);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  React.useEffect(() => {
+    getUsernameLogin();
+  }, []);
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({

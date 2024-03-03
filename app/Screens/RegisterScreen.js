@@ -20,6 +20,7 @@ export default function RegisterScreen({ navigation }) {
   const [registerUsername, setRegisterUsername] = useState("");
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
+  const [errMessage, setErrMessage] = useState("");
 
   const [registerHandler] = useMutation(REGISTER);
 
@@ -38,6 +39,7 @@ export default function RegisterScreen({ navigation }) {
       navigation.navigate("Login");
     } catch (error) {
       console.log(error);
+      setErrMessage(error.message);
     }
   };
 
@@ -92,6 +94,9 @@ export default function RegisterScreen({ navigation }) {
             <Text style={styleRegister.buttonRegisterText}>Register</Text>
           </View>
         </TouchableOpacity>
+        <View>
+          <Text style={{ color: "red", marginTop: 20 }}>{errMessage}</Text>
+        </View>
       </View>
       <View style={styleRegister.footerRegister}>
         <Text style={{ color: "white", textAlign: "center", marginTop: 100 }}>

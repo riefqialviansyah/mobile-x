@@ -10,8 +10,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { styleHome } from "../style/styleSheet";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { formatTime } from "../helpers/formated";
-import { useEffect, useState } from "react";
-import * as SecureStore from "expo-secure-store";
+import { useContext, useState } from "react";
+import { AuthContex } from "../helpers/authContex";
 
 const LIKE = gql`
   mutation Mutation($postId: ID) {
@@ -67,13 +67,17 @@ export default function DetailPostScreen({ navigation, route }) {
   const [likeHandler] = useMutation(LIKE);
   const { postId } = route.params;
   const [newComment, setNewComment] = useState("");
-  const [username, setUsername] = useState("");
-
   const { loading, error, data, refetch } = useQuery(GET_DETAIL_POST, {
     variables: { id: postId },
   });
 
+  const { usernameLogin } = useContext(AuthContex);
+
   const [commentHandler] = useMutation(COMMENT);
+
+  const newCommentHandler = (text) => {
+    setNewComment(text);
+  };
 
   if (loading) {
     return (
@@ -103,27 +107,17 @@ export default function DetailPostScreen({ navigation, route }) {
 
   const commentSubmit = async () => {
     try {
+      console.log("Start process add comment");
       if (newComment) {
         await commentHandler({ variables: { postId, content: newComment } });
       }
-      await refetch();
+      refetch();
+      console.log("Success add comment");
+      setNewComment("");
     } catch (error) {
       console.log(error);
     }
   };
-
-  // useEffect(() => {
-  //   async function getUsername() {
-  //     try {
-  //       const result = await SecureStore.getItemAsync("username");
-  //       console.log(result, "get username<<<<<<<<<,");
-  //       setUsername(result);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   }
-  //   getUsername();
-  // }, []);
 
   return (
     <SafeAreaView style={styleHome.container}>
@@ -242,7 +236,7 @@ export default function DetailPostScreen({ navigation, route }) {
               }}
             >
               <Text style={{ color: "white", fontSize: 16 }}>
-                @{username}
+                @{usernameLogin}
                 {" : "}
               </Text>
               <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -250,12 +244,13 @@ export default function DetailPostScreen({ navigation, route }) {
                   placeholder="Enter comment here"
                   placeholderTextColor={"#a9a9a9"}
                   multiline={true}
-                  onChangeText={setNewComment}
+                  onChangeText={newCommentHandler}
                   style={{
                     color: "white",
                     width: 270,
                     padding: 5,
                   }}
+                  value={newComment}
                 ></TextInput>
                 <TouchableHighlight onPress={commentSubmit}>
                   <Image

@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { gql, useQuery, useMutation } from "@apollo/client";
+import { useEffect } from "react";
 
 const SEARCH = gql`
   query GetUserDataByUsername($username: String) {
@@ -71,7 +72,7 @@ export default function SearchUserScreen({ navigation, route }) {
   }
 
   if (error) return <Text>`Error! ${error.message}`</Text>;
-  console.log(data);
+
   return (
     <SafeAreaView
       style={{

@@ -19,6 +19,7 @@ export default function LoginScreen({ navigation }) {
   const [emailOrUsername, setEmailOrUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loginHandler] = useMutation(LOGIN);
+  const [errMessage, setErrMessage] = useState("");
 
   const { setIsLogin } = useContext(AuthContex);
 
@@ -34,6 +35,7 @@ export default function LoginScreen({ navigation }) {
       setIsLogin(true);
     } catch (error) {
       console.log(error);
+      setErrMessage(error.message);
     }
   };
 
@@ -75,6 +77,9 @@ export default function LoginScreen({ navigation }) {
             <Text style={styleLogin.buttonLoginText}>Login</Text>
           </View>
         </TouchableOpacity>
+        <View>
+          <Text style={{ color: "red" }}>{errMessage}</Text>
+        </View>
       </View>
       <View style={styleLogin.footerLogin}>
         <Text style={{ color: "white", textAlign: "center", marginTop: 80 }}>

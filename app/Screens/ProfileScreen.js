@@ -147,10 +147,10 @@ export default function ProfileScreen({ route }) {
               await SecureStore.deleteItemAsync("username");
               // const tokenAf = await SecureStore.getItemAsync("access_token");
               // const usenameAf = await SecureStore.getItemAsync("username");
-              console.log(
-                { message: "before", tokenBe, usenameBe },
-                { message: "after", tokenAf, usenameAf }
-              );
+              // console.log(
+              //   { message: "before", tokenBe, usenameBe },
+              //   { message: "after", tokenAf, usenameAf }
+              // );
             }}
           >
             <Image
