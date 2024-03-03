@@ -33,7 +33,7 @@ const FOLLOW = gql`
   }
 `;
 
-export default function SearchUserScreen() {
+export default function SearchUserScreen({ navigation, route }) {
   let searchKey = "";
 
   const { loading, error, data, refetch } = useQuery(SEARCH, {
@@ -44,10 +44,12 @@ export default function SearchUserScreen() {
 
   const followSubmit = async (idToFollow) => {
     try {
+      console.log("start follow process");
       const result = await followhandler({
         variables: { followingId: idToFollow },
       });
-      console.log(result.data.follow.message, "<<<<<<<<<< message follow");
+      console.log(result.data.follow.message);
+      navigation.navigate("Profile", { reload: true });
     } catch (error) {
       console.log(error);
     }
@@ -69,7 +71,7 @@ export default function SearchUserScreen() {
   }
 
   if (error) return <Text>`Error! ${error.message}`</Text>;
-
+  console.log(data);
   return (
     <SafeAreaView
       style={{
@@ -154,8 +156,19 @@ export default function SearchUserScreen() {
                     onPress={() => {
                       followSubmit(item.item._id);
                     }}
+                    style={{
+                      backgroundColor: "#1e90ff",
+                      padding: 5,
+                      borderRadius: 5,
+                      alignItems: "center",
+                    }}
                   >
-                    <Text style={{ color: "white", marginRight: 10 }}>
+                    <Text
+                      style={{
+                        color: "white",
+                        marginRight: 10,
+                      }}
+                    >
                       Follow
                     </Text>
                   </TouchableHighlight>

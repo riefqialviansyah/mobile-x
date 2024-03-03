@@ -54,24 +54,43 @@ const UNFOLLOW = gql`
   }
 `;
 
-export default function ProfileScreen() {
+const DEL_FOLLOWER = gql`
+  mutation DelFollower($followerId: ID) {
+    delFollower(followerId: $followerId) {
+      message
+    }
+  }
+`;
+
+export default function ProfileScreen({ route }) {
   const { setIsLogin } = React.useContext(AuthContex);
   const [tabProfile, setTabProfile] = React.useState("following");
 
   const { loading, error, data, refetch } = useQuery(PROFILE);
   const [unfollowHandler] = useMutation(UNFOLLOW);
+  const [delFollowerHandler] = useMutation(DEL_FOLLOWER);
 
   const unfollowSubmit = async (idUnfollow) => {
     try {
-      console.log("mulai proses unfollow<<<<<<<<<<<");
+      console.log("Start unfollow process");
       const result = await unfollowHandler({
         variables: { followingId: idUnfollow },
       });
-      console.log(
-        result.data.follow.message,
-        "<<<<<<<<<< message unfollow in profile"
-      );
+      console.log(result.data.follow.message);
       await refetch();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const delFollowSubmit = async (idDelFollower) => {
+    try {
+      console.log("Start delete follower");
+      const result = await delFollowerHandler({
+        variables: { followerId: idDelFollower },
+      });
+      console.log(result);
+      refetch();
     } catch (error) {
       console.log(error);
     }
@@ -98,6 +117,10 @@ export default function ProfileScreen() {
 
   if (error) return <Text>`Error! ${error.message}`</Text>;
 
+  if (route.params && route.params.reload) {
+    refetch();
+  }
+
   return (
     <View
       style={{
@@ -118,12 +141,12 @@ export default function ProfileScreen() {
           <TouchableHighlight
             onPress={async () => {
               setIsLogin(false);
-              const tokenBe = await SecureStore.getItemAsync("access_token");
-              const usenameBe = await SecureStore.getItemAsync("username");
+              // const tokenBe = await SecureStore.getItemAsync("access_token");
+              // const usenameBe = await SecureStore.getItemAsync("username");
               await SecureStore.deleteItemAsync("access_token");
               await SecureStore.deleteItemAsync("username");
-              const tokenAf = await SecureStore.getItemAsync("access_token");
-              const usenameAf = await SecureStore.getItemAsync("username");
+              // const tokenAf = await SecureStore.getItemAsync("access_token");
+              // const usenameAf = await SecureStore.getItemAsync("username");
               console.log(
                 { message: "before", tokenBe, usenameBe },
                 { message: "after", tokenAf, usenameAf }
@@ -219,7 +242,13 @@ export default function ProfileScreen() {
                       onPress={() => {
                         unfollowSubmit(item.item._id);
                       }}
-                      style={{ borderBottomWidth: 0.5, borderColor: "white" }}
+                      style={{
+                        borderBottomWidth: 0.5,
+                        borderColor: "white",
+                        backgroundColor: "#f4a460",
+                        padding: 5,
+                        borderRadius: 5,
+                      }}
                     >
                       <Text style={{ color: "white" }}>Unfollow</Text>
                     </TouchableHighlight>
@@ -256,7 +285,16 @@ export default function ProfileScreen() {
                         @{item.item.username}
                       </Text>
                     </View>
-                    <TouchableHighlight>
+                    <TouchableHighlight
+                      onPress={() => {
+                        delFollowSubmit(item.item._id);
+                      }}
+                      style={{
+                        backgroundColor: "#ff4500",
+                        padding: 5,
+                        borderRadius: 5,
+                      }}
+                    >
                       <Text style={{ color: "white" }}>Delete</Text>
                     </TouchableHighlight>
                   </View>

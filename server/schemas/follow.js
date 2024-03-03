@@ -17,6 +17,10 @@ const typeDefs = `#graphql
     email: String
   }
 
+  type Message {
+    message: String
+  }
+
   # Endpoint
   type Query {
     getDataFollowers(_id: ID): [Follow]
@@ -25,6 +29,7 @@ const typeDefs = `#graphql
   # Endpoint
   type Mutation {
     follow(followingId: ID): Follow
+    delFollower(followerId: ID): Message
   }
 `;
 
@@ -49,6 +54,19 @@ const resolvers = {
           followerId: user._id,
         });
         return result;
+      } catch (error) {
+        throw error;
+      }
+    },
+    delFollower: async (parent, args, contexValue) => {
+      try {
+        const user = await contexValue.auth();
+        const { followerId } = args;
+        const result = await Follow.deleteFollower({
+          followerId,
+          idLogin: user._id,
+        });
+        return { message: result };
       } catch (error) {
         throw error;
       }

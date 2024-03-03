@@ -81,6 +81,23 @@ class Follow {
     console.log(follower);
     return follower;
   }
+
+  static async deleteFollower({ followerId, idLogin }) {
+    const followCollection = this.collection();
+
+    await followCollection.deleteOne({
+      $and: [
+        {
+          followingId: new ObjectId(String(idLogin)),
+        },
+        {
+          followerId: new ObjectId(String(followerId)),
+        },
+      ],
+    });
+    // console.log("Berhasil di hapus<<<<<<");
+    return "Success delete follower";
+  }
 }
 
 module.exports = Follow;

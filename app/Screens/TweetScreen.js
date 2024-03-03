@@ -66,7 +66,20 @@ export default function TweetScreen({ navigation, route }) {
     );
   }
 
-  if (error) return <Text>`Error! ${error.message}`</Text>;
+  if (error) {
+    return (
+      <View
+        style={{
+          backgroundColor: "black",
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Text style={{ color: "white" }}>`Error! ${error.message}`</Text>
+      </View>
+    );
+  }
 
   const likeSubmit = async (postId) => {
     try {
