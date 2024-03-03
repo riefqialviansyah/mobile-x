@@ -50,7 +50,7 @@ startStandaloneServer(server, {
           },
           options
         );
-        console.log(user);
+        // console.log(user);
         if (!user) throw new Error("Invalid token");
 
         return { _id: user._id, username: user.username };

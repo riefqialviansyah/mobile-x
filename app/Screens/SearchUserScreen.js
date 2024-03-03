@@ -7,7 +7,7 @@ import {
   FlatList,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useQuery, useMutation } from "@apollo/client";
 
 const SEARCH = gql`
   query GetUserDataByUsername($username: String) {
@@ -19,12 +19,39 @@ const SEARCH = gql`
     }
   }
 `;
+
+const FOLLOW = gql`
+  mutation Mutation($followingId: ID) {
+    follow(followingId: $followingId) {
+      _id
+      followingId
+      followerId
+      createdAt
+      updatedAt
+      message
+    }
+  }
+`;
+
 export default function SearchUserScreen() {
   let searchKey = "";
 
   const { loading, error, data, refetch } = useQuery(SEARCH, {
     variables: { username: "" },
   });
+
+  const [followhandler] = useMutation(FOLLOW);
+
+  const followSubmit = async (idToFollow) => {
+    try {
+      const result = await followhandler({
+        variables: { followingId: idToFollow },
+      });
+      console.log(result.data.follow.message, "<<<<<<<<<< message follow");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   if (loading) {
     return (
@@ -54,12 +81,14 @@ export default function SearchUserScreen() {
       <Text
         style={{
           color: "white",
-          fontSize: 24,
+          fontSize: 30,
           textAlign: "center",
           marginBottom: 20,
+          width: 300,
+          alignSelf: "center",
         }}
       >
-        Find your friend's here
+        Find your friend's here to follow
       </Text>
       <View
         style={{
@@ -121,7 +150,11 @@ export default function SearchUserScreen() {
                       @{item.item.username}
                     </Text>
                   </View>
-                  <TouchableHighlight>
+                  <TouchableHighlight
+                    onPress={() => {
+                      followSubmit(item.item._id);
+                    }}
+                  >
                     <Text style={{ color: "white", marginRight: 10 }}>
                       Follow
                     </Text>

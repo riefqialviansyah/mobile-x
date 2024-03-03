@@ -68,14 +68,14 @@ class User {
     return { token, username: user.username };
   }
 
-  static async getUserByUsername(username) {
+  static async getUserByUsername({ username, idLogin }) {
     const userCollection = this.collection();
 
     const option = {
       projection: { password: 0 },
     };
 
-    const user = await userCollection
+    let user = await userCollection
       .find(
         {
           username: { $regex: username },
@@ -83,7 +83,12 @@ class User {
         option
       )
       .toArray();
-    if (!user) throw new Error("User not found");
+
+    user = user.filter((el) => {
+      if (String(el._id) != String(idLogin)) {
+        return el;
+      }
+    });
     return user;
   }
 

@@ -2,7 +2,7 @@ import { Text, View, Image, TouchableHighlight, FlatList } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import * as React from "react";
 import { AuthContex } from "../helpers/authContex";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 
 const PROFILE = gql`
   query GetUserDataById {
@@ -41,11 +41,45 @@ const PROFILE = gql`
   }
 `;
 
+const UNFOLLOW = gql`
+  mutation Mutation($followingId: ID) {
+    follow(followingId: $followingId) {
+      _id
+      followingId
+      followerId
+      createdAt
+      updatedAt
+      message
+    }
+  }
+`;
+
 export default function ProfileScreen() {
   const { setIsLogin } = React.useContext(AuthContex);
   const [tabProfile, setTabProfile] = React.useState("following");
 
-  const { loading, error, data } = useQuery(PROFILE);
+  const { loading, error, data, refetch } = useQuery(PROFILE);
+  const [unfollowHandler] = useMutation(UNFOLLOW);
+
+  const unfollowSubmit = async (idUnfollow) => {
+    try {
+      console.log("mulai proses unfollow<<<<<<<<<<<");
+      const result = await unfollowHandler({
+        variables: { followingId: idUnfollow },
+      });
+      console.log(
+        result.data.follow.message,
+        "<<<<<<<<<< message unfollow in profile"
+      );
+      await refetch();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  React.useEffect(() => {
+    refetch();
+  }, []);
 
   if (loading) {
     return (
@@ -63,6 +97,7 @@ export default function ProfileScreen() {
   }
 
   if (error) return <Text>`Error! ${error.message}`</Text>;
+
   return (
     <View
       style={{
@@ -180,7 +215,12 @@ export default function ProfileScreen() {
                         @{item.item.username}
                       </Text>
                     </View>
-                    <TouchableHighlight>
+                    <TouchableHighlight
+                      onPress={() => {
+                        unfollowSubmit(item.item._id);
+                      }}
+                      style={{ borderBottomWidth: 0.5, borderColor: "white" }}
+                    >
                       <Text style={{ color: "white" }}>Unfollow</Text>
                     </TouchableHighlight>
                   </View>

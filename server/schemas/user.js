@@ -64,11 +64,15 @@ const typeDefs = `#graphql
 
 const resolvers = {
   Query: {
-    getUserDataByUsername: async (parent, args) => {
+    getUserDataByUsername: async (parent, args, contexValue) => {
       try {
+        const user = await contexValue.auth();
+
         const { username } = args;
-        console.log(args, "<<<<<<<<<<");
-        const result = await User.getUserByUsername(username);
+        const result = await User.getUserByUsername({
+          username,
+          idLogin: user._id,
+        });
         return result;
       } catch (error) {
         throw error;

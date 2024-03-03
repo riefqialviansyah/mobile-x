@@ -24,7 +24,7 @@ const typeDefs = `#graphql
 
   # Endpoint
   type Mutation {
-    follow(followingId: ID, followerId: ID): Follow
+    follow(followingId: ID): Follow
   }
 `;
 
@@ -41,9 +41,13 @@ const resolvers = {
     },
   },
   Mutation: {
-    follow: async (parent, args) => {
+    follow: async (parent, args, contexValue) => {
       try {
-        const result = await Follow.followUser(args);
+        const user = await contexValue.auth();
+        const result = await Follow.followUser({
+          ...args,
+          followerId: user._id,
+        });
         return result;
       } catch (error) {
         throw error;

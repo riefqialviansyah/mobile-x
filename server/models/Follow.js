@@ -8,7 +8,6 @@ class Follow {
 
   static async followUser({ followingId, followerId }) {
     const followCollection = this.collection();
-
     const followData = {
       followingId: new ObjectId(String(followingId)), // yang diikuti
       followerId: new ObjectId(String(followerId)), // yang mengikuti
