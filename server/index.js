@@ -85,9 +85,9 @@ const server = new ApolloServer({
   );
 
   await new Promise((resolve) =>
-    httpServer.listen({ port: process.env.PORT || 4000 }, resolve)
+    httpServer.listen({ port: process.env.PORT || 3000 }, resolve)
   );
-  console.log(`🚀 Server ready at http://localhost:4000/`);
+  console.log(`🚀 Server ready at http://localhost:3000/`);
 })();
 
 // startStandaloneServer(server, {
