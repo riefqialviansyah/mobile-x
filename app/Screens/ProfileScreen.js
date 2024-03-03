@@ -63,7 +63,6 @@ export default function ProfileScreen() {
   }
 
   if (error) return <Text>`Error! ${error.message}`</Text>;
-  console.log(data);
   return (
     <View
       style={{

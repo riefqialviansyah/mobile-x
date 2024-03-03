@@ -37,7 +37,7 @@ const typeDefs = `#graphql
 
   # Endpoint
   type Query {
-    getUserDataByUsername(username: String): User
+    getUserDataByUsername(username: String): [User]
     getUserDataById: Profile
   }
 
@@ -67,7 +67,7 @@ const resolvers = {
     getUserDataByUsername: async (parent, args) => {
       try {
         const { username } = args;
-
+        console.log(args, "<<<<<<<<<<");
         const result = await User.getUserByUsername(username);
         return result;
       } catch (error) {

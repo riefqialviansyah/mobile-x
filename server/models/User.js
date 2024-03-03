@@ -75,9 +75,15 @@ class User {
       projection: { password: 0 },
     };
 
-    const user = await userCollection.findOne({ username }, option);
+    const user = await userCollection
+      .find(
+        {
+          username: { $regex: username },
+        },
+        option
+      )
+      .toArray();
     if (!user) throw new Error("User not found");
-
     return user;
   }
 
