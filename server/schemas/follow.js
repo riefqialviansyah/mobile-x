@@ -35,8 +35,9 @@ const typeDefs = `#graphql
 
 const resolvers = {
   Query: {
-    getDataFollowers: async (parent, args) => {
+    getDataFollowers: async (parent, args, contexValue) => {
       try {
+        const user = await contexValue.auth();
         const { _id: id } = args;
         const followers = await Follow.getFollowers(id);
         return followers;

@@ -70,8 +70,10 @@ const resolvers = {
         throw error;
       }
     },
-    getDataPostById: async (parent, args) => {
+    getDataPostById: async (parent, args, contextValue) => {
       try {
+        await contextValue.auth();
+
         const { _id: id } = args;
         const post = await Post.getPostById(id);
         return post;
